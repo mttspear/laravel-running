@@ -72,7 +72,8 @@
                 </b-form>
             </div>
             <div class="col-md-6">
-                <b-table striped hover :items="items"> </b-table>
+                <b-table striped hover :fields="scoreFields" :items="scores">
+                </b-table>
             </div>
         </div>
     </div>
@@ -86,12 +87,16 @@ export default {
     props: ["activeGame", "gameScores"],
     computed: {
         pickArtist() {
-            let obj = this.scores.find((o) => o.answerStatus === "pick-artist");
+            var obj = "undefined";
+            if (this.scores !== null) {
+                let obj = this.scores.find(
+                    (o) => o.answerStatus === "pick-artist"
+                );
+            }
             return obj;
         },
         renderPickArtist() {
             if (typeof this.pickArtist !== "undefined") {
-                console.log("here");
                 return true;
             } else {
                 return false;
@@ -126,6 +131,12 @@ export default {
                 { song: 21, player: "Larsen" },
                 { song: 89, player: "Geneva" },
                 { song: 38, player: "Jami" },
+            ],
+            scoreFields: [
+                // A virtual column that doesn't exist in items
+                "artistName",
+                "playerAnswer",
+                "answerStatus",
             ],
             game: JSON.parse(this.activeGame),
             scores: JSON.parse(this.gameScores),
