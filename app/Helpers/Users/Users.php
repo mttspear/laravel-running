@@ -47,6 +47,7 @@ class Users
             ->join("users", "users.id", "=", "opponent.playerId")
             ->leftJoin("game", "game.id", "=", "game_score.gameId")
             ->where("game_score.playerId", "=", $id)
+            ->distinct()
             ->get();
         return $session;
     }
