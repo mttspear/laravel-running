@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\GameController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,10 +15,25 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get("/", function () {
+    return view("welcome");
 });
 
-Route::get('/test', function () {
-    return 'Hello world';
-});
+Route::get("/user", [UserController::class, "show"]);
+
+Auth::routes();
+
+Route::get("/home", [
+    App\Http\Controllers\HomeController::class,
+    "index",
+])->name("home");
+
+Route::post("/add-game", [GameController::class, "createGame"]);
+
+Route::post("/start-game", [GameController::class, "startGame"]);
+
+Route::post("/submit-artist", [GameController::class, "submitArtist"]);
+
+Route::post("/confirm-artist", [GameController::class, "confirmArtist"]);
+
+Route::get("/submit-song", [GameController::class, "submitSong"]);
