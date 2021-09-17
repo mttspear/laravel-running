@@ -2,10 +2,10 @@
     <div class="container">
         <div class="row justify-content-center">
             <flip-countdown
-                deadline="2021-09-11 05:54:00"
-                :showDays="false"
-                :showHours="false"
-                :showMinutes="false"
+                :deadline="this.currentUserMove.expired + ' utc'"
+                :showDays="true"
+                :showHours="true"
+                :showMinutes="true"
             ></flip-countdown>
             <div class="col-md-6">
                 <b-form v-if="renderPickArtist">
@@ -87,12 +87,11 @@ export default {
     props: ["activeGame", "gameScores"],
     computed: {
         pickArtist() {
-            var obj = "undefined";
-            if (this.scores !== null) {
-                let obj = this.scores.find(
-                    (o) => o.answerStatus === "pick-artist"
-                );
-            }
+            //var obj = "undefined";
+            //console.log(this.scores);
+            //if (this.scores !== null) {
+            let obj = this.scores.find((o) => o.answerStatus === "pick-artist");
+            //}
             return obj;
         },
         renderPickArtist() {
@@ -116,22 +115,22 @@ export default {
                 return true;
             }
         },
+        currentUserMove() {
+            let latest = this.scores;
+            latest = latest.reduce(function (r, a) {
+                return r.created_at > a.created_at ? r : a;
+            });
+            return latest;
+        },
     },
     mounted() {
+        console.log(Date.now());
         Echo.private("game").listen("NewGame", (e) => {
-            console.log(e);
+            //console.log(e);
         });
-        //console.log(this.activeGame);
-        //console.log(this.gameScore);
     },
     data() {
         return {
-            items: [
-                { song: 40, player: "Dickerson" },
-                { song: 21, player: "Larsen" },
-                { song: 89, player: "Geneva" },
-                { song: 38, player: "Jami" },
-            ],
             scoreFields: [
                 // A virtual column that doesn't exist in items
                 "artistName",
@@ -149,13 +148,13 @@ export default {
     },
     methods: {
         submitArtist() {
-            console.log(this.artistEntered);
+            //console.log(this.artistEntered);
             axios
                 .post("/submit-artist", {
                     artist: this.artistEntered,
                 })
                 .then((response) => {
-                    console.log(response.data);
+                    //console.log(response.data);
                     this.artistOptions = response.data;
                 });
         },
@@ -171,7 +170,7 @@ export default {
                 });
         },
         submitSong() {
-            console.log(this.artistSelected);
+            //console.log(this.artistSelected);
             axios
                 .post("/submit-song", {
                     song: this.song,
@@ -179,7 +178,7 @@ export default {
                 })
                 .then((response) => {
                     console.log(response.data);
-                    this.artistOptions = response.data;
+                    //this.artistOptions = response.data;
                 });
         },
     },

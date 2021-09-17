@@ -15,14 +15,20 @@ class GameHelper
 
     public $response;
     public $artistId;
+    public $artistName;
     public $guess;
     public $gameId;
 
-    public function __construct($response, $artistId, $artist, $guess, $gameId)
-    {
+    public function __construct(
+        $response,
+        $artistId,
+        $artistName,
+        $guess,
+        $gameId
+    ) {
         $this->response = $response;
         $this->artistId = $artistId;
-        $this->artist = $artist;
+        $this->artistName = $artistName;
         $this->guess = $guess;
         $this->gameId = $gameId;
     }
@@ -94,8 +100,12 @@ class GameHelper
         return false;
     }
 
+    /**
+     * Update the game score table to reflect correct/incorrect answers
+     */
     public function scoreAnswer()
     {
+        $user = Auth::user();
         $answerCheck = $this->checkAnswer();
         //If test is true score a point
         if ($answerCheck) {
@@ -105,18 +115,21 @@ class GameHelper
         else {
             $answerStatus = "incorrect";
         }
-        dd($answerStatus);
+
         //update player who guessed
-        GameScore::where("gameId", $gameId)
+        GameScore::where("gameId", $this->gameId)
             ->where("playerId", "=", $user->id)
-            ->where("artistID", "=", $artistId)
+            ->where("artistID", "=", $this->artistId)
             ->where("answerStatus", "=", "player-turn")
             ->update([
                 "answerStatus" => $answerStatus,
-                "playerAnswer" => $song,
+                "playerAnswer" => $this->guess,
             ]);
     }
 
+    /**
+     *Set the next move based on game score and previous guesses.
+     */
     public function setNextMove()
     {
         $user = Auth::user();
@@ -129,7 +142,6 @@ class GameHelper
             ->where("answerStatus", "=", "incorrect")
             ->get();
 
-        //dd($previousIncorrect);
         //if empty set new artist status
         if (!$previousIncorrect->isEmpty()) {
             dd("empty");
@@ -147,7 +159,7 @@ class GameHelper
             $gameScore->answerStatus = "wait-turn";
             $gameScore->gameId = $this->gameId;
             $gameScore->artistID = $this->artistId;
-            $gameScore->artistName = $this->artist;
+            $gameScore->artistName = $this->artistName;
             $gameScore->save();
         }
     }

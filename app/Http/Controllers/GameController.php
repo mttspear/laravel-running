@@ -78,7 +78,7 @@ class GameController extends Controller
         $data = json_decode($data, true);
         $artist = $data["artist"];
         $discog = new Discog();
-        $discogResults = $discog->getArtist($artist);
+        $discogResults = $discog->getArtistFromSearch($artist);
         return $discogResults;
     }
 
@@ -92,15 +92,19 @@ class GameController extends Controller
         $user = Auth::user();
         $data = $request->getContent();
         $data = json_decode($data, true);
-        $artist = $data["artist"];
+        $artistId = $data["artist"];
         $gameId = (int) $data["gameId"];
         //update game score table will need to null
+        $discog = new Discog();
+        $discogResults = $discog->getArtistById($artistId);
+        $artistName = $discogResults["name"];
         GameScore::where("gameId", $gameId)
             ->where("playerId", $user->id)
             ->whereNull("playerAnswer")
             ->update([
                 "answerStatus" => "wait-turn",
-                "artistID" => $artist,
+                "artistName" => $artistName,
+                "artistID" => $artistId,
             ]);
 
         GameScore::where("gameId", $gameId)
@@ -108,7 +112,8 @@ class GameController extends Controller
             ->whereNull("playerAnswer")
             ->update([
                 "answerStatus" => "player-turn",
-                "artistID" => $artist,
+                "artistName" => $artistName,
+                "artistID" => $artistId,
             ]);
     }
 
@@ -119,19 +124,20 @@ class GameController extends Controller
         $data = $request->getContent();
         $data = json_decode($data, true);
 
-        //$gameId = $data["gameId"];
-        //$song = $data["song"];
-        $gameId = 18;
-        $song = "shine on you crazy diamond";
-        $artistId = 45467;
-        $artist = "pink floyd";
+        $gameId = (int) $data["gameId"];
+        $song = $data["song"];
+        //$gameId = 19;
+        //$song = "wish you were here";
+        $currentTurn = GameScore::getCurrentTurn($gameId);
+        $artistId = $currentTurn->artistID;
+        $artistName = $currentTurn->artistName;
 
-        $discogResults = $discog->getSong($song, $artist);
+        $discogResults = $discog->getSong($song, $artistName);
 
         $gameHelper = new GameHelper(
             $discogResults,
             $artistId,
-            $artist,
+            $artistName,
             $song,
             $gameId
         );

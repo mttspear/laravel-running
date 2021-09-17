@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Game extends Model
 {
@@ -14,5 +15,16 @@ class Game extends Model
     public function gameScores()
     {
         return $this->hasMany(GameScore::class, "gameId");
+    }
+
+    public function scopeGetActiveGame($query)
+    {
+        return $query
+            ->whereHas("gameScores", function ($queryWhere) {
+                return $queryWhere
+                    ->where("playerId", "=", Auth::user()->id)
+                    ->where("status", "=", "active");
+            })
+            ->first();
     }
 }

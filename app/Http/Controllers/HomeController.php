@@ -30,22 +30,27 @@ class HomeController extends Controller
         //save a session that indicates currently logged on
         Session(["key" => "value"]);
         Session()->save();
-        var_dump(Auth::user()->id);
         //Get the users who are currently logged on
         $currentUsers = Users::getCurrentUsersWithNoPendingGame();
         $pendingGames = Users::getUsersPendingGames();
         $merged = $currentUsers->merge($pendingGames);
         //get any active game
-        $activeGame = Game::whereHas("gameScores", function ($query) {
-            return $query
-                ->where("playerId", "=", Auth::user()->id)
-                ->where("status", "=", "active");
-        })->first();
-        $gameScores = GameScore::where("gameId", $activeGame->id)->get();
+        $activeGame = Game::getActiveGame();
+
+        $gameScores = null;
+        if (!is_null($activeGame)) {
+            $gameScores = GameScore::where("gameId", $activeGame->id)
+                ->get()
+                ->toJson();
+
+            $activeGame = $activeGame->toJson();
+        }
+        //dd(\Carbon\Carbon::now());
+        //dd($gameScores[0]->expired);
         return view("home", [
             "currentUsers" => $merged->toJson(),
-            "activeGame" => $activeGame->toJson(),
-            "gameScores" => $gameScores->toJson(),
+            "activeGame" => $activeGame,
+            "gameScores" => $gameScores,
         ]);
     }
 }
