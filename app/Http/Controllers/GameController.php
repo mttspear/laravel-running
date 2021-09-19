@@ -21,13 +21,11 @@ class GameController extends Controller
      */
     public function __construct()
     {
-        //$this->middleware('auth');
+        $this->middleware("auth");
     }
 
     /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * Start a new game
      */
     public function createGame(Request $request)
     {
@@ -73,7 +71,6 @@ class GameController extends Controller
 
     public function submitArtist(Request $request)
     {
-        $user = Auth::user();
         $data = $request->getContent();
         $data = json_decode($data, true);
         $artist = $data["artist"];
@@ -98,23 +95,33 @@ class GameController extends Controller
         $discog = new Discog();
         $discogResults = $discog->getArtistById($artistId);
         $artistName = $discogResults["name"];
-        GameScore::where("gameId", $gameId)
-            ->where("playerId", $user->id)
-            ->whereNull("playerAnswer")
-            ->update([
-                "answerStatus" => "wait-turn",
-                "artistName" => $artistName,
-                "artistID" => $artistId,
-            ]);
 
-        GameScore::where("gameId", $gameId)
-            ->where("playerId", "!=", $user->id)
-            ->whereNull("playerAnswer")
-            ->update([
-                "answerStatus" => "player-turn",
-                "artistName" => $artistName,
-                "artistID" => $artistId,
-            ]);
+        //Update player who ansered
+        GameScore::setCurrentPlayerStatus(
+            $gameId,
+            $user->id,
+            "wait-turn",
+            null,
+            $artistId,
+            $artistName
+        );
+
+        //update waiting player
+        GameScore::setOtherPlayerStatus(
+            $gameId,
+            $user->id,
+            "player-turn",
+            null,
+            $artistId,
+            $artistName
+        );
+
+        $gameScores = GameScore::GetGameScores($gameId)->toJson();
+
+        return response()->json([
+            "gameScores" => $gameScores,
+            "gameScore" => GameScore::getGameScore($gameId)->toJson(),
+        ]);
     }
 
     public function submitSong(Request $request)
@@ -126,12 +133,15 @@ class GameController extends Controller
 
         $gameId = (int) $data["gameId"];
         $song = $data["song"];
-        //$gameId = 19;
-        //$song = "wish you were here";
+
         $currentTurn = GameScore::getCurrentTurn($gameId);
+        // if the players turn is not up exit
+        if ($currentTurn->count() == 0) {
+            return response()->json(["message" => "not your turn"]);
+        }
+
         $artistId = $currentTurn->artistID;
         $artistName = $currentTurn->artistName;
-
         $discogResults = $discog->getSong($song, $artistName);
 
         $gameHelper = new GameHelper(
@@ -146,6 +156,13 @@ class GameController extends Controller
 
         //update other player
         $gameHelper->setNextMove();
-        dd("done");
+
+        //return the updated score
+        $gameScores = GameScore::GetGameScores($gameId)->toJson();
+
+        return response()->json([
+            "gameScores" => $gameScores,
+            "gameScore" => $gameHelper->score->toJson(),
+        ]);
     }
 }

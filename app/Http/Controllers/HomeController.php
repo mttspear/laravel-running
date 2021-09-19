@@ -38,19 +38,28 @@ class HomeController extends Controller
         $activeGame = Game::getActiveGame();
 
         $gameScores = null;
-        if (!is_null($activeGame)) {
+        $gameScore = null;
+
+        if ($activeGame->count() != 0) {
             $gameScores = GameScore::where("gameId", $activeGame->id)
+                ->orderBy("updated_at", "desc")
                 ->get()
                 ->toJson();
+            $gameScore = GameScore::getGameScore($activeGame->id)->toJson();
 
             $activeGame = $activeGame->toJson();
+        } else {
+            $activeGame = false;
         }
+
         //dd(\Carbon\Carbon::now());
         //dd($gameScores[0]->expired);
         return view("home", [
             "currentUsers" => $merged->toJson(),
             "activeGame" => $activeGame,
             "gameScores" => $gameScores,
+            "gameScore" => $gameScore,
+            //"user" => Auth::user(),
         ]);
     }
 }

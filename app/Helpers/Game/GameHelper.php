@@ -3,21 +3,22 @@
 namespace App\Helpers\Game;
 
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Log;
+use App\Models\Game;
 use App\Models\GameScore;
-
-use Illuminate\Support\Facades\Http;
 
 class GameHelper
 {
     public $duplicateCheckPercent = 50.0;
-    public $similarCheckPercent = 75.0;
+    public $similarCheckPercent = 70.0;
 
     public $response;
     public $artistId;
     public $artistName;
     public $guess;
     public $gameId;
+    public $answerStatus;
+    public $score;
 
     public function __construct(
         $response,
@@ -31,6 +32,7 @@ class GameHelper
         $this->artistName = $artistName;
         $this->guess = $guess;
         $this->gameId = $gameId;
+        $this->score = GameScore::getGameScore($this->gameId);
     }
 
     /**
@@ -40,7 +42,7 @@ class GameHelper
     {
         //check artist
         $checkArtist = $this->checkArtist();
-        \Log::info($checkArtist ? "checkArtist:true" : "checkArtist:false");
+        Log::info($checkArtist ? "checkArtist:true" : "checkArtist:false");
         if (!$checkArtist) {
             return false;
         }
@@ -57,7 +59,17 @@ class GameHelper
             ->where("gameId", $this->gameId)
             ->get();
 
-        //check match percent
+        foreach ($previousGuesses as $item) {
+            similar_text(
+                strtolower($item["playerAnswer"]),
+                strtolower($this->guess),
+                $perc
+            );
+            if ($perc >= $this->duplicateCheckPercent) {
+                return false;
+            }
+        }
+
         return true;
     }
 
@@ -85,7 +97,7 @@ class GameHelper
                 strtolower($this->guess),
                 $perc
             );
-            \Log::info(
+            Log::info(
                 "guess:" .
                     $this->guess .
                     " song:" .
@@ -109,22 +121,22 @@ class GameHelper
         $answerCheck = $this->checkAnswer();
         //If test is true score a point
         if ($answerCheck) {
-            $answerStatus = "correct";
+            $this->answerStatus = "correct";
         }
         //if the test is false incorrect
         else {
-            $answerStatus = "incorrect";
+            $this->answerStatus = "incorrect";
         }
 
         //update player who guessed
-        GameScore::where("gameId", $this->gameId)
-            ->where("playerId", "=", $user->id)
-            ->where("artistID", "=", $this->artistId)
-            ->where("answerStatus", "=", "player-turn")
-            ->update([
-                "answerStatus" => $answerStatus,
-                "playerAnswer" => $this->guess,
-            ]);
+        GameScore::setCurrentPlayerStatus(
+            $this->gameId,
+            $user->id,
+            $this->answerStatus,
+            $this->guess,
+            $this->artistId,
+            $this->artistName
+        );
     }
 
     /**
@@ -134,45 +146,51 @@ class GameHelper
     {
         $user = Auth::user();
         //If score is at limit game is over
-        $score = $this->getGameScore();
+        $game = Game::find($this->gameId);
+        foreach ($this->score as $item) {
+            if ($item["score"] >= $game->scoreLimit) {
+                //set game as over
+                Game::setGameOver($this->gameId);
+                //set game score to over
+                GameScore::setGameOver($this->gameId);
+            }
+        }
         //if other player is incorrect new artist needed
-        $previousIncorrect = GameScore::where("artistID", $this->artistId)
-            ->where("gameId", $this->gameId)
-            ->where("playerId", "!=", $user->id)
-            ->where("answerStatus", "=", "incorrect")
-            ->get();
-
-        //if empty set new artist status
-        if (!$previousIncorrect->isEmpty()) {
-            dd("empty");
-        } else {
-            GameScore::where("gameId", $this->gameId)
-                ->where("playerId", "!=", $user->id)
-                ->where("artistID", "=", $this->artistId)
-                ->where("answerStatus", "=", "wait-turn")
-                ->update([
-                    "answerStatus" => "player-turn",
-                ]);
-            //create record for next move
-            $gameScore = new GameScore();
-            $gameScore->playerId = $user->id;
+        $gameScore = new GameScore();
+        $gameScore->playerId = $user->id;
+        $gameScore->gameId = $this->gameId;
+        $otherPlayerStatus = GameScore::getOtherPlayersStatus($this->gameId);
+        //if the players answer is incorrect and the other players status is not pick artist
+        if (
+            $this->answerStatus == "incorrect" &&
+            $otherPlayerStatus["answerStatus"] != "pick-artist"
+        ) {
+            //if incorrect player will choose the next artist
+            $gameScore->answerStatus = "pick-artist";
+            $gameScore->save();
+        }
+        // if player iincorrect and other is picking the artist use wait turn and null the artist
+        elseif (
+            $this->answerStatus == "incorrect" &&
+            $otherPlayerStatus["answerStatus"] == "pick-artist"
+        ) {
             $gameScore->answerStatus = "wait-turn";
-            $gameScore->gameId = $this->gameId;
+            $gameScore->save();
+        } else {
+            //if correct keep the current artist
+            $gameScore->answerStatus = "wait-turn";
             $gameScore->artistID = $this->artistId;
             $gameScore->artistName = $this->artistName;
             $gameScore->save();
         }
-    }
 
-    public function getGameScore()
-    {
-        $gameScore = \DB::table("game_score")
-            ->select("playerId", \DB::raw("count(*) as score"))
-            ->where("gameId", "=", $this->gameId)
-            ->where("answerStatus", "=", "correct")
-            ->groupBy("playerId")
-            ->get();
-
-        return $gameScore;
+        GameScore::setOtherPlayerStatus(
+            $this->gameId,
+            $user->id,
+            "player-turn",
+            null,
+            $this->artistId,
+            $this->artistName
+        );
     }
 }

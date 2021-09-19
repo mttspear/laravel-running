@@ -5,6 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * Status Options:
+ * pending: the player has a game request pending
+ * active:
+ * complete:
+ */
+
 class Game extends Model
 {
     protected $table = "game";
@@ -26,5 +33,12 @@ class Game extends Model
                     ->where("status", "=", "active");
             })
             ->first();
+    }
+
+    public function scopeSetGameOver($query, $gameId)
+    {
+        return $query->where("id", "==", $gameId)->update([
+            "status" => "game-over",
+        ]);
     }
 }
