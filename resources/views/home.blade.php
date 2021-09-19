@@ -26,7 +26,7 @@
     <div class="row justify-content-center">
         <div class="col-md-6">
             <h3>Current Game</h3>
-            <game-component :active-game='@json($activeGame)' :game-scores='@json($gameScores)'></game-component>
+            <game-component :auth-user='{{Auth::user()}}' :active-game='@json($activeGame)' :game-scores='@json($gameScores)' :game-score='@json($gameScore)'></game-component>
         </div>
     </div>
 </div>

@@ -1,12 +1,18 @@
 <template>
-    <div class="container">
+    <div v-if="isGameActive" class="container">
         <div class="row justify-content-center">
             <flip-countdown
-                :deadline="this.currentUserMove.expired + ' utc'"
-                :showDays="true"
-                :showHours="true"
+                :deadline="currentUserMove.expired + ' utc'"
+                :showDays="false"
+                :showHours="false"
                 :showMinutes="true"
             ></flip-countdown>
+            <div class="col-md-12">
+                <li v-for="item in this.score" :key="item.playerId">
+                    Player: {{ item.playerId }} - {{ item.score }}
+                </li>
+                Player {{ currentUserMove.playerId }} Move
+            </div>
             <div class="col-md-6">
                 <b-form v-if="renderPickArtist">
                     <b-form-group
@@ -51,7 +57,7 @@
                     >
                 </b-form>
 
-                <b-form v-if="renderPickSong">
+                <b-form v-if="renderPickSong" @submit.prevent>
                     <b-form-group
                         id="input-group-1"
                         label="Song:"
@@ -72,7 +78,12 @@
                 </b-form>
             </div>
             <div class="col-md-6">
-                <b-table striped hover :fields="scoreFields" :items="scores">
+                <b-table
+                    striped
+                    hover
+                    :fields="scoreFields"
+                    :items="currentGameScores"
+                >
                 </b-table>
             </div>
         </div>
@@ -84,18 +95,29 @@ import FlipCountdown from "vue2-flip-countdown";
 
 export default {
     components: { FlipCountdown },
-    props: ["activeGame", "gameScores"],
+    props: ["activeGame", "gameScores", "gameScore", "authUser"],
     computed: {
         pickArtist() {
-            //var obj = "undefined";
-            //console.log(this.scores);
-            //if (this.scores !== null) {
-            let obj = this.scores.find((o) => o.answerStatus === "pick-artist");
-            //}
-            return obj;
+            if (this.isEmpty(this.activeGame)) {
+                return null;
+            }
+            if (
+                this.currentUserMove.playerId === this.user.id &&
+                this.currentUserMove.answerStatus === "pick-artist"
+            ) {
+                return true;
+            } else {
+                return false;
+            }
         },
         renderPickArtist() {
-            if (typeof this.pickArtist !== "undefined") {
+            if (this.isEmpty(this.activeGame)) {
+                return null;
+            }
+            if (
+                this.currentUserMove.playerId === this.user.id &&
+                this.currentUserMove.answerStatus === "pick-artist"
+            ) {
                 return true;
             } else {
                 return false;
@@ -109,6 +131,9 @@ export default {
             }
         },
         renderPickSong() {
+            if (this.isEmpty(this.activeGame)) {
+                return null;
+            }
             if (this.renderPickArtist) {
                 return false;
             } else {
@@ -116,29 +141,50 @@ export default {
             }
         },
         currentUserMove() {
-            let latest = this.scores;
-            latest = latest.reduce(function (r, a) {
-                return r.created_at > a.created_at ? r : a;
+            if (this.isEmpty(this.activeGame)) {
+                return null;
+            }
+            let playerTurn = this.scores.filter(function (item) {
+                return item.answerStatus === "player-turn";
+            });
+            let pickArtist = this.scores.filter(function (item) {
+                return item.answerStatus === "pick-artist";
+            });
+            if (playerTurn.length !== 0) {
+                return playerTurn[0];
+            } else {
+                return pickArtist[0];
+            }
+        },
+        currentGameScores() {
+            if (this.isEmpty(this.activeGame)) {
+                return null;
+            }
+            let latest = this.scores.filter(function (item) {
+                return item.playerAnswer != null;
             });
             return latest;
         },
+        isGameActive() {
+            if (this.isEmpty(this.activeGame)) {
+                return false;
+            } else {
+                return true;
+            }
+        },
     },
     mounted() {
-        console.log(Date.now());
         Echo.private("game").listen("NewGame", (e) => {
             //console.log(e);
         });
     },
     data() {
         return {
-            scoreFields: [
-                // A virtual column that doesn't exist in items
-                "artistName",
-                "playerAnswer",
-                "answerStatus",
-            ],
+            scoreFields: ["artistName", "playerAnswer", "answerStatus"],
             game: JSON.parse(this.activeGame),
             scores: JSON.parse(this.gameScores),
+            score: JSON.parse(this.gameScore),
+            user: this.authUser,
             artist: null,
             artistEntered: null,
             artistSelected: null,
@@ -154,7 +200,6 @@ export default {
                     artist: this.artistEntered,
                 })
                 .then((response) => {
-                    //console.log(response.data);
                     this.artistOptions = response.data;
                 });
         },
@@ -166,7 +211,7 @@ export default {
                 })
                 .then((response) => {
                     console.log(response.data);
-                    this.artistOptions = response.data;
+                    this.updateFromResponse(response);
                 });
         },
         submitSong() {
@@ -177,9 +222,16 @@ export default {
                     gameId: this.game.id,
                 })
                 .then((response) => {
-                    console.log(response.data);
-                    //this.artistOptions = response.data;
+                    this.song = null;
+                    this.updateFromResponse(response);
                 });
+        },
+        updateFromResponse(response) {
+            this.scores = JSON.parse(response.data.gameScores);
+            this.score = JSON.parse(response.data.gameScore);
+        },
+        isEmpty(obj) {
+            return Object.keys(obj).length === 0;
         },
     },
 };
