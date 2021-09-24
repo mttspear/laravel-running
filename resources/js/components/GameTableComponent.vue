@@ -30,12 +30,7 @@
 export default {
     name: "Basic",
     props: ["currentUsers"],
-    mounted() {
-        Echo.private("game").listen("NewGame", e => {
-            //update user to show game button
-            console.log(e.id);
-        });
-    },
+    mounted() {},
     created() {
         //
         this.addUserFields();
@@ -43,7 +38,7 @@ export default {
     methods: {
         addGame(user) {
             console.log(user);
-            axios.post("/game", { id: +user }).then(response => {
+            axios.post("/game", { id: +user }).then((response) => {
                 console.log(response.data);
             });
             console.log();
@@ -54,7 +49,7 @@ export default {
             for (var i = 0; i < this.items.length; i++) {
                 this.items[i].pending = false; // Add "total": 2 to all objects in array
             }
-        }
+        },
     },
     data() {
         return {
@@ -63,10 +58,10 @@ export default {
                 "index",
                 "user_id",
                 "name",
-                "game"
+                "game",
             ],
-            items: JSON.parse(this.currentUsers)
+            items: JSON.parse(this.currentUsers),
         };
-    }
+    },
 };
 </script>

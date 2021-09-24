@@ -19,6 +19,7 @@ class GameHelper
     public $gameId;
     public $answerStatus;
     public $score;
+    public $otherPlayer;
 
     public function __construct(
         $response,
@@ -33,6 +34,7 @@ class GameHelper
         $this->guess = $guess;
         $this->gameId = $gameId;
         $this->score = GameScore::getGameScore($this->gameId);
+        $this->setOtherPlayer();
     }
 
     /**
@@ -159,11 +161,10 @@ class GameHelper
         $gameScore = new GameScore();
         $gameScore->playerId = $user->id;
         $gameScore->gameId = $this->gameId;
-        $otherPlayerStatus = GameScore::getOtherPlayersStatus($this->gameId);
         //if the players answer is incorrect and the other players status is not pick artist
         if (
             $this->answerStatus == "incorrect" &&
-            $otherPlayerStatus["answerStatus"] != "pick-artist"
+            $this->otherPlayer["answerStatus"] != "pick-artist"
         ) {
             //if incorrect player will choose the next artist
             $gameScore->answerStatus = "pick-artist";
@@ -172,7 +173,7 @@ class GameHelper
         // if player iincorrect and other is picking the artist use wait turn and null the artist
         elseif (
             $this->answerStatus == "incorrect" &&
-            $otherPlayerStatus["answerStatus"] == "pick-artist"
+            $this->otherPlayer["answerStatus"] == "pick-artist"
         ) {
             $gameScore->answerStatus = "wait-turn";
             $gameScore->save();
@@ -192,5 +193,10 @@ class GameHelper
             $this->artistId,
             $this->artistName
         );
+    }
+
+    public function setOtherPlayer()
+    {
+        $this->otherPlayer = GameScore::getOtherPlayersStatus($this->gameId);
     }
 }

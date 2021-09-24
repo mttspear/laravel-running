@@ -174,8 +174,16 @@ export default {
         },
     },
     mounted() {
-        Echo.private("game").listen("NewGame", (e) => {
-            //console.log(e);
+        Echo.private("game." + this.authUser.id).listen(
+            "GameEvent",
+            (response) => {
+                console.log(response);
+                this.updateFromResponse(response);
+            }
+        );
+
+        Echo.channel("home").listen("NewMessage", (e) => {
+            console.log(e);
         });
     },
     data() {
@@ -228,6 +236,7 @@ export default {
         },
         updateFromResponse(response) {
             this.scores = JSON.parse(response.data.gameScores);
+            console.log(JSON.parse(response.data.gameScore));
             this.score = JSON.parse(response.data.gameScore);
         },
         isEmpty(obj) {

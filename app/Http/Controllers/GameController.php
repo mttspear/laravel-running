@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 use App\Helpers\Users\Users;
 use App\Helpers\Discog\Discog;
@@ -11,6 +12,9 @@ use App\Helpers\Game\GameHelper;
 
 use App\Models\Game;
 use App\Models\GameScore;
+
+use App\Events\NewMessage;
+use App\Events\GameEvent;
 
 class GameController extends Controller
 {
@@ -159,10 +163,31 @@ class GameController extends Controller
 
         //return the updated score
         $gameScores = GameScore::GetGameScores($gameId)->toJson();
+        $gameScore = GameScore::getGameScore($gameId)->toJson();
+
+        //send score to other player
+        Log::info("otherPlayer:" . print_r($gameHelper->otherPlayer, true));
+        event(
+            new GameEvent(
+                $gameHelper->otherPlayer->playerId,
+                $gameScore,
+                $gameScores
+            )
+        );
 
         return response()->json([
             "gameScores" => $gameScores,
             "gameScore" => $gameHelper->score->toJson(),
         ]);
+    }
+
+    public function test(Request $request)
+    {
+        //event(new NewMessage("hello world"));
+        $user = Auth::user();
+        $gameScores = GameScore::GetGameScores(20)->toJson();
+        $gameScore = GameScore::getGameScore(20)->toJson();
+        event(new GameEvent(1, $gameScore, $gameScores));
+        dd("hello");
     }
 }

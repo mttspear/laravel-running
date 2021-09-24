@@ -37,3 +37,5 @@ Route::post("/submit-artist", [GameController::class, "submitArtist"]);
 Route::post("/confirm-artist", [GameController::class, "confirmArtist"]);
 
 Route::post("/submit-song", [GameController::class, "submitSong"]);
+
+Route::get("/test", [GameController::class, "test"]);

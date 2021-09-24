@@ -32,30 +32,25 @@
 export default {
     name: "Basic",
     props: ["currentUsers"],
-    mounted() {
-        Echo.private("game").listen("NewGame", e => {
-            //update user to show game button
-            console.log(e.id);
-        });
-    },
+    mounted() {},
     created() {
         console.log(this.items);
     },
     methods: {
         addGame(user) {
             console.log(user);
-            axios.post("/add-game", { id: +user }).then(response => {
+            axios.post("/add-game", { id: +user }).then((response) => {
                 console.log(response.data);
             });
             console.log();
         },
         startGame(game) {
             console.log(game);
-            axios.post("/start-game", { id: +game }).then(response => {
+            axios.post("/start-game", { id: +game }).then((response) => {
                 console.log(response.data);
             });
             console.log();
-        }
+        },
     },
     data() {
         return {
@@ -66,10 +61,10 @@ export default {
                 "name",
                 "game_id",
                 "status",
-                "game"
+                "game",
             ],
-            items: JSON.parse(this.currentUsers)
+            items: JSON.parse(this.currentUsers),
         };
-    }
+    },
 };
 </script>
