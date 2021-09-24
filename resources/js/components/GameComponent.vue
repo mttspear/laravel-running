@@ -236,7 +236,6 @@ export default {
         },
         updateFromResponse(response) {
             this.scores = JSON.parse(response.data.gameScores);
-            console.log(JSON.parse(response.data.gameScore));
             this.score = JSON.parse(response.data.gameScore);
         },
         isEmpty(obj) {

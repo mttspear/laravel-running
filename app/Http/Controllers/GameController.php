@@ -99,7 +99,6 @@ class GameController extends Controller
         $discog = new Discog();
         $discogResults = $discog->getArtistById($artistId);
         $artistName = $discogResults["name"];
-
         //Update player who ansered
         GameScore::setCurrentPlayerStatus(
             $gameId,
@@ -125,6 +124,7 @@ class GameController extends Controller
         return response()->json([
             "gameScores" => $gameScores,
             "gameScore" => GameScore::getGameScore($gameId)->toJson(),
+            "artist" => $discogResults,
         ]);
     }
 
