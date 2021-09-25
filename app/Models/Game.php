@@ -37,7 +37,7 @@ class Game extends Model
 
     public function scopeSetGameOver($query, $gameId)
     {
-        return $query->where("id", "==", $gameId)->update([
+        return $query->where("id", "=", $gameId)->update([
             "status" => "game-over",
         ]);
     }
