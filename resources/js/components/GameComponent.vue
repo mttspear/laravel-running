@@ -1,19 +1,41 @@
 <template>
     <div v-if="isGameActive" class="container">
         <div class="row justify-content-center">
+            <scoreboard-component
+                :score="this.score"
+                :playerTurn="this.currentUserMove.playerId"
+            >
+            </scoreboard-component>
+
+            <div class="row justify-content-center">
+                <img
+                    class="artist-image"
+                    v-bind:src="this.artistData.images[0].resource_url"
+                />
+                <div class="artist-title">
+                    Name a Song By {{ this.artistData.name }}
+                </div>
+            </div>
             <flip-countdown
                 :deadline="currentUserMove.expired + ' utc'"
                 :showDays="false"
                 :showHours="false"
                 :showMinutes="true"
             ></flip-countdown>
-            <div class="col-md-12">
-                <li v-for="item in this.score" :key="item.playerId">
-                    Player: {{ item.playerId }} - {{ item.score }}
-                </li>
-                Player {{ currentUserMove.playerId }} Move
-            </div>
+
             <div class="col-md-6">
+                <loading-progress
+                    v-if="renderLoad"
+                    :progress="progress"
+                    :indeterminate="indeterminate"
+                    :counter-clockwise="counterClockwise"
+                    :hide-background="hideBackground"
+                    size="64"
+                    rotate
+                    fillDuration="2"
+                    rotationDuration="1"
+                />
+
                 <b-form v-if="renderPickArtist">
                     <b-form-group
                         id="input-group-artist"
@@ -76,6 +98,7 @@
                         >Submit</b-button
                     >
                 </b-form>
+                <div v-else>Other Players Turn</div>
             </div>
             <div class="col-md-6">
                 <b-table
@@ -95,7 +118,7 @@ import FlipCountdown from "vue2-flip-countdown";
 
 export default {
     components: { FlipCountdown },
-    props: ["activeGame", "gameScores", "gameScore", "authUser"],
+    props: ["activeGame", "gameScores", "gameScore", "authUser", "artistInfo"],
     computed: {
         pickArtist() {
             if (this.isEmpty(this.activeGame)) {
@@ -136,10 +159,13 @@ export default {
             }
             if (this.renderPickArtist) {
                 return false;
-            } else {
+            } else if (this.currentUserMove.playerId === this.user.id) {
                 return true;
+            } else {
+                return false;
             }
         },
+
         currentUserMove() {
             if (this.isEmpty(this.activeGame)) {
                 return null;
@@ -181,10 +207,6 @@ export default {
                 this.updateFromResponse(response);
             }
         );
-
-        Echo.channel("home").listen("NewMessage", (e) => {
-            console.log(e);
-        });
     },
     data() {
         return {
@@ -192,12 +214,18 @@ export default {
             game: JSON.parse(this.activeGame),
             scores: JSON.parse(this.gameScores),
             score: JSON.parse(this.gameScore),
+            artistData: this.artistInfo,
             user: this.authUser,
             artist: null,
             artistEntered: null,
             artistSelected: null,
             artistOptions: null,
             song: null,
+            progress: 0,
+            indeterminate: true,
+            counterClockwise: false,
+            hideBackground: false,
+            renderLoad: false,
         };
     },
     methods: {
@@ -224,6 +252,7 @@ export default {
         },
         submitSong() {
             //console.log(this.artistSelected);
+            this.renderLoad = true;
             axios
                 .post("/submit-song", {
                     song: this.song,
@@ -237,6 +266,7 @@ export default {
         updateFromResponse(response) {
             this.scores = JSON.parse(response.data.gameScores);
             this.score = JSON.parse(response.data.gameScore);
+            this.renderLoad = false;
         },
         isEmpty(obj) {
             return Object.keys(obj).length === 0;

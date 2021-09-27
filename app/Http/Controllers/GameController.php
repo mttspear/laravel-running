@@ -13,7 +13,7 @@ use App\Helpers\Game\GameHelper;
 use App\Models\Game;
 use App\Models\GameScore;
 
-use App\Events\NewMessage;
+use App\Events\UserEvent;
 use App\Events\GameEvent;
 
 class GameController extends Controller
@@ -37,6 +37,7 @@ class GameController extends Controller
         //Create new game
         $game = new Game();
         $game->status = "pending";
+        $game->requestor = $user->id;
         $game->save();
         //add players to the game
         $gameScore = new GameScore();
@@ -46,12 +47,19 @@ class GameController extends Controller
         $gameScore->save();
 
         $gameScoreSecondPlayer = new GameScore();
-        $gameScoreSecondPlayer->playerId = $request->input("id");
+        $gameScoreSecondPlayer->playerId = (int) $request->input("id");
         $gameScoreSecondPlayer->answerStatus = "pending";
         $gameScoreSecondPlayer->gameId = $game->id;
         $gameScoreSecondPlayer->save();
         //if player has pending page or already in game return player busy message
-        return ["status" => "Game Created"];
+        $currentUsers = Users::getCurrentUsersWithNoPendingGame();
+        $pendingGames = Users::getUsersPendingGames();
+        $merged = $currentUsers->merge($pendingGames);
+        event(new UserEvent((int) $request->input("id"), $merged));
+        //Create Event
+        return response()->json([
+            "currentUsers" => $merged->toJson(),
+        ]);
     }
 
     public function startGame(Request $request)
@@ -138,7 +146,7 @@ class GameController extends Controller
         $gameId = (int) $data["gameId"];
         $song = $data["song"];
 
-        $currentTurn = GameScore::getCurrentTurn($gameId);
+        $currentTurn = GameScore::getCurrentUserTurn($gameId);
         // if the players turn is not up exit
         if ($currentTurn->count() == 0) {
             return response()->json(["message" => "not your turn"]);
@@ -167,6 +175,7 @@ class GameController extends Controller
 
         //send score to other player
         Log::info("otherPlayer:" . print_r($gameHelper->otherPlayer, true));
+        Log::info("gameScore:" . print_r($gameScore, true));
         event(
             new GameEvent(
                 $gameHelper->otherPlayer->playerId,
@@ -177,17 +186,13 @@ class GameController extends Controller
 
         return response()->json([
             "gameScores" => $gameScores,
-            "gameScore" => $gameHelper->score->toJson(),
+            "gameScore" => $gameScore,
         ]);
     }
 
     public function test(Request $request)
     {
         //event(new NewMessage("hello world"));
-        $user = Auth::user();
-        $gameScores = GameScore::GetGameScores(20)->toJson();
-        $gameScore = GameScore::getGameScore(20)->toJson();
-        event(new GameEvent(1, $gameScore, $gameScores));
-        dd("hello");
+        GameScore::setGameOver(20);
     }
 }

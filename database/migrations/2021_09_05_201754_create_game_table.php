@@ -13,11 +13,12 @@ class CreateGameTable extends Migration
      */
     public function up()
     {
-        Schema::create('game', function (Blueprint $table) {
+        Schema::create("game", function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->integer('scoreLimit')->default(10);
-            $table->string('status');
+            $table->integer("scoreLimit")->default(10);
+            $table->string("status");
+            $table->string("requestor");
         });
     }
 
@@ -28,6 +29,6 @@ class CreateGameTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('game');
+        Schema::dropIfExists("game");
     }
 }

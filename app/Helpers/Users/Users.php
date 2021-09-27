@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Helpers\Users;
+
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class Users
 {
@@ -16,12 +18,22 @@ class Users
             ->timestamp;
         $id = Auth::user()->id;
 
-        $data = \DB::table("sessions")
+        $data = DB::table("sessions")
             ->select("sessions.user_id", "name")
-            ->addSelect(\DB::raw("null as game_id, null as status"))
+            ->addSelect(DB::raw("null as game_id, null as status"))
             ->join("users", "users.id", "=", "sessions.user_id")
             ->where("user_id", "!=", $id)
             ->where("last_activity", ">", $previousTime)
+            ->whereNotIn("users.id", function ($query) {
+                $query
+                    ->select("playerId")
+                    ->from("game_score")
+                    ->whereIn("answerStatus", [
+                        "pending",
+                        "player-turn",
+                        "wait-turn",
+                    ]);
+            })
             ->get();
         return $data;
     }
@@ -33,12 +45,13 @@ class Users
     {
         $id = Auth::user()->id;
 
-        $session = \DB::table("game_score")
+        $session = DB::table("game_score")
             ->select(
                 "opponent.playerId as user_id",
                 "users.name",
                 "game.id as game_id",
-                "game.status"
+                "game.status",
+                "requestor"
             )
             ->join("game_score AS opponent", function ($join) {
                 $join->on("opponent.gameId", "=", "game_score.gameId");

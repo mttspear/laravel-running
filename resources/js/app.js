@@ -9,6 +9,13 @@ import BootstrapVue from "bootstrap-vue";
 window.Vue = require("vue").default;
 Vue.use(BootstrapVue);
 
+import "vue-progress-path/dist/vue-progress-path.css";
+import VueProgress from "vue-progress-path";
+
+Vue.use(VueProgress, {
+    defaultShape: "circle",
+});
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -25,16 +32,23 @@ Vue.component(
     require("./components/ExampleComponent.vue").default
 );
 Vue.component(
-    "user-table-component",
-    require("./components/UserTableComponent.vue").default
+    "available-players-component",
+    require("./components/AvailablePlayersComponent.vue").default
 );
-Vue.component(
-    "game-table-component",
-    require("./components/GameTableComponent.vue").default
-);
+
 Vue.component(
     "game-component",
     require("./components/GameComponent.vue").default
+);
+
+Vue.component(
+    "scoreboard-component",
+    require("./components/ScoreboardComponent.vue").default
+);
+
+Vue.component(
+    "user-games-component",
+    require("./components/UserGamesComponent.vue").default
 );
 
 /**
@@ -52,25 +66,8 @@ const app = new Vue({
         };
     },
     created() {
-        console.log(this.user);
-        console.log(this.users);
-        //this.fetchMessages();
+        //console.log(this.$root);
     },
 
-    methods: {
-        /*
-        fetchMessages() {
-            axios.get('/messages').then(response => {
-                this.messages = response.data;
-            });
-        },
-
-        addMessage(message) {
-            this.messages.push(message);
-
-            axios.post('/messages', message).then(response => {
-              console.log(response.data);
-            });
-        }*/
-    },
+    methods: {},
 });

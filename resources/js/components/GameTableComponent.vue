@@ -8,18 +8,20 @@
 
             <template #cell(game)="row">
                 <b-button
-                    size="sm"
-                    @click="addGame(row.item.user_id)"
-                    class="mr-1"
-                >
-                    New Game
-                </b-button>
-                <b-button
+                    v-if="item.status === 'pending'"
                     size="sm"
                     @click="startGame(row.item.user_id)"
                     class="mr-1"
                 >
                     Start Game
+                </b-button>
+                <b-button
+                    v-else
+                    size="sm"
+                    @click="addGame(row.item.user_id)"
+                    class="mr-1"
+                >
+                    New Game
                 </b-button>
             </template>
         </b-table>
@@ -28,26 +30,40 @@
 
 <script>
 export default {
-    name: "Basic",
+    name: "GameTable",
     props: ["currentUsers"],
-    mounted() {},
+    mounted() {
+        Echo.private("game." + this.authUser.id).listen(
+            "UserEvent",
+            (response) => {
+                console.log("here");
+                this.items = JSON.parse(response.data.currentUsers);
+            }
+        );
+    },
     created() {
-        //
         this.addUserFields();
     },
     methods: {
         addGame(user) {
-            console.log(user);
             axios.post("/game", { id: +user }).then((response) => {
+                console.log("response");
+                console.log(JSON.parse(response.data.currentUsers));
+                this.items = JSON.parse(response.data.currentUsers);
+            });
+        },
+        startGame(game) {
+            console.log(game);
+            axios.post("/start-game", { id: +game }).then((response) => {
                 console.log(response.data);
+                this.items = JSON.parse(response.data.currentUsers);
             });
             console.log();
         },
-
         addUserFields() {
             //add this into db query
             for (var i = 0; i < this.items.length; i++) {
-                this.items[i].pending = false; // Add "total": 2 to all objects in array
+                this.items[i].pending = false;
             }
         },
     },

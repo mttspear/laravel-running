@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Helpers\Users\Users;
 use App\Models\Game;
 use App\Models\GameScore;
+use App\Helpers\Discog\Discog;
 
 use App\Events\NewGame;
 
@@ -30,27 +31,31 @@ class HomeController extends Controller
      */
     public function index()
     {
-        //test
-
-        //event(new NewGame(Auth::user(), "hello"));
-
         //save a session that indicates currently logged on
         Session(["key" => "value"]);
         Session()->save();
         //Get the users who are currently logged on
         $currentUsers = Users::getCurrentUsersWithNoPendingGame();
+
         $pendingGames = Users::getUsersPendingGames();
+
         $merged = $currentUsers->merge($pendingGames);
+
+        //get previous games
+        $inActiveGames = Game::getInactiveGames()->toJson();
+
         //get any active game
         $activeGame = Game::getActiveGame();
-
         $gameScores = null;
         $gameScore = null;
+        $discogResults = null;
 
         if ($activeGame->count() != 0) {
             $gameScores = GameScore::GetGameScores($activeGame->id)->toJson();
             $gameScore = GameScore::getGameScore($activeGame->id)->toJson();
-
+            $currentTurn = GameScore::getCurrentTurn($activeGame->id);
+            $discog = new Discog();
+            $discogResults = $discog->getArtistById($currentTurn->artistID);
             $activeGame = $activeGame->toJson();
         } else {
             $activeGame = false;
@@ -59,9 +64,10 @@ class HomeController extends Controller
         return view("home", [
             "currentUsers" => $merged->toJson(),
             "activeGame" => $activeGame,
+            "inActiveGames" => $inActiveGames,
             "gameScores" => $gameScores,
             "gameScore" => $gameScore,
-            //"user" => Auth::user(),
+            "artist" => $discogResults,
         ]);
     }
 }

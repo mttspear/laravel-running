@@ -17,7 +17,7 @@ class Game extends Model
     protected $table = "game";
     protected $primaryKey = "id";
 
-    protected $fillable = ["scoreLimit", "status"];
+    protected $fillable = ["scoreLimit", "status", "requestor"];
 
     public function gameScores()
     {
@@ -33,6 +33,19 @@ class Game extends Model
                     ->where("status", "=", "active");
             })
             ->first();
+    }
+
+    public function scopeGetInactiveGames($query)
+    {
+        return $query
+            ->select("game.id", "game.status")
+            ->whereHas("gameScores", function ($queryWhere) {
+                return $queryWhere
+                    ->where("playerId", "=", Auth::user()->id)
+                    ->where("status", "!=", "active");
+            })
+            ->groupBy("game.id")
+            ->get();
     }
 
     public function scopeSetGameOver($query, $gameId)

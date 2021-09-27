@@ -148,6 +148,7 @@ class GameHelper
     {
         $user = Auth::user();
         //If score is at limit game is over
+        $this->score = GameScore::getGameScore($this->gameId); //update the score
         $game = Game::find($this->gameId);
         foreach ($this->score as $item) {
             if ($item["score"] >= $game->scoreLimit) {
