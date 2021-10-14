@@ -53,17 +53,14 @@ export default {
     created() {},
     methods: {
         addGame(user) {
-            console.log(user);
             axios.post("/add-game", { id: +user }).then((response) => {
-                console.log(JSON.parse(response.data.currentUsers));
                 this.items = JSON.parse(response.data.currentUsers);
             });
-            console.log();
         },
         startGame(game) {
-            console.log(game);
             axios.post("/start-game", { id: +game }).then((response) => {
                 console.log(response.data);
+                this.$parent.updateFromResponse(response);
             });
         },
     },

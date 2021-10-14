@@ -1,0 +1,47 @@
+.welcome_img {
+    width: 4%;
+}
+
+.welcome_player {
+    font-size: 3rem;
+}
+
+.player_name {
+    color: #1d3557;
+}
+
+.welcome_message {
+    font-size: 1rem;
+}
+
+.icon_img {
+    width: 10%;
+}
+.scoreboard__name {
+    font-weight: bold;
+    padding: 10px;
+    text-align: center;
+    font-size: large;
+}
+
+.scoreboard__score {
+    padding: 10px;
+    text-align: center;
+    font-size: medium;
+}
+
+.active {
+    background-color: #a8dadc;
+}
+
+.artist-image {
+    width: 50%;
+}
+
+.artist-title {
+    font-size: medium;
+}
+
+body {
+    font-family: "Quicksand", sans-serif;
+}

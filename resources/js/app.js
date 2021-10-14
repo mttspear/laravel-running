@@ -59,11 +59,9 @@ Vue.component(
 
 const app = new Vue({
     el: "#app",
-    props: ["user"],
+    props: [],
     data() {
-        return {
-            users: this.user,
-        };
+        return {};
     },
     created() {
         //console.log(this.$root);

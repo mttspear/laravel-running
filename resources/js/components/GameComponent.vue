@@ -1,113 +1,183 @@
 <template>
-    <div v-if="isGameActive" class="container">
-        <div class="row justify-content-center">
-            <scoreboard-component
-                :score="this.score"
-                :playerTurn="this.currentUserMove.playerId"
-            >
-            </scoreboard-component>
-
-            <div class="row justify-content-center">
-                <img
-                    class="artist-image"
-                    v-bind:src="this.artistData.images[0].resource_url"
-                />
-                <div class="artist-title">
-                    Name a Song By {{ this.artistData.name }}
-                </div>
-            </div>
-            <flip-countdown
-                :deadline="currentUserMove.expired + ' utc'"
-                :showDays="false"
-                :showHours="false"
-                :showMinutes="true"
-            ></flip-countdown>
-
+    <div>
+        <div v-if="isGameActive == false" class="row justify-content-center">
             <div class="col-md-6">
-                <loading-progress
-                    v-if="renderLoad"
-                    :progress="progress"
-                    :indeterminate="indeterminate"
-                    :counter-clockwise="counterClockwise"
-                    :hide-background="hideBackground"
-                    size="64"
-                    rotate
-                    fillDuration="2"
-                    rotationDuration="1"
-                />
-
-                <b-form v-if="renderPickArtist">
-                    <b-form-group
-                        id="input-group-artist"
-                        label="Artist:"
-                        label-for="input-artist"
-                        description="Search for artist"
-                    >
-                        <b-form-input
-                            id="input-artist"
-                            v-model="artistEntered"
-                            type="text"
-                            placeholder="Artist Name"
-                            required
-                        ></b-form-input>
-                    </b-form-group>
-                    <b-button @click="submitArtist()" variant="primary"
-                        >Submit</b-button
-                    >
-                </b-form>
-
-                <b-form v-if="renderArtistOptions">
-                    <b-form-group
-                        label="Individual radios"
-                        v-slot="{ ariaDescribedby }"
-                    >
-                        <div
-                            v-for="artist in artistOptions"
-                            v-bind:key="artist.id"
-                        >
-                            <b-form-radio
-                                :value="artist.id"
-                                v-model="artistSelected"
-                                :aria-describedby="ariaDescribedby"
-                                name="artist-options"
-                                >{{ artist.title }}</b-form-radio
+                <h3>
+                    <img class="icon_img" src="/img/community.png" />
+                    Past Games
+                </h3>
+                <user-games-component
+                    :games="this.dataInactiveGames"
+                ></user-games-component>
+            </div>
+            <div class="col-md-6">
+                <h3>
+                    <img class="icon_img" src="/img/community.png" />
+                    Available Players
+                </h3>
+                <available-players-component
+                    :auth-user="this.dataAuthUser"
+                    :current-users="this.dataCurrentUsers"
+                ></available-players-component>
+            </div>
+        </div>
+        <div v-if="isGameActive" class="row justify-content-center">
+            <div class="col-md-8 text-center">
+                <h3>Current Game</h3>
+            </div>
+            <div class="col-md-8">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div v-if="this.dataArtistInfo != null">
+                            <div class="row justify-content-center text-center">
+                                <img
+                                    class="artist-image"
+                                    v-bind:src="
+                                        this.dataArtistInfo.images[0]
+                                            .resource_url
+                                    "
+                                />
+                            </div>
+                            <div
+                                class="
+                                    artist-title
+                                    row
+                                    justify-content-center
+                                    text-center
+                                    mt-3
+                                "
                             >
+                                <b-alert show>
+                                    Name a Song By
+                                    {{ this.dataArtistInfo.name }}
+                                </b-alert>
+                            </div>
                         </div>
-                    </b-form-group>
-                    <b-button @click="confirmArtist()" variant="primary"
-                        >Submit</b-button
-                    >
-                </b-form>
 
-                <b-form v-if="renderPickSong" @submit.prevent>
-                    <b-form-group
-                        id="input-group-1"
-                        label="Song:"
-                        label-for="input-1"
-                        description="Name a song by the singer."
-                    >
-                        <b-form-input
-                            v-model="song"
-                            id="input-song"
-                            type="text"
-                            placeholder="Enter song"
-                            required
-                        ></b-form-input>
-                    </b-form-group>
-                    <b-button @click="submitSong()" variant="primary"
-                        >Submit</b-button
-                    >
-                </b-form>
-                <div v-else>Other Players Turn</div>
-            </div>
-            <div class="col-md-6">
-                <b-table
-                    striped
-                    hover
-                    :fields="scoreFields"
-                    :items="currentGameScores"
-                >
-                </b-table>
+                        <scoreboard-component
+                            :score="this.dataGameScore"
+                            :playerTurn="this.currentUserMove.playerId"
+                            :score-limit="this.dataActiveGame.scoreLimit"
+                        >
+                        </scoreboard-component>
+
+                        <flip-countdown
+                            class="mt-3"
+                            :deadline="currentUserMove.expired + ' utc'"
+                            :showDays="false"
+                            :showHours="false"
+                            :showMinutes="true"
+                        ></flip-countdown>
+
+                        <div class="col-md-6 mt-3">
+                            <loading-progress
+                                v-if="renderLoad"
+                                :progress="progress"
+                                :indeterminate="indeterminate"
+                                :counter-clockwise="counterClockwise"
+                                :hide-background="hideBackground"
+                                size="64"
+                                rotate
+                                fillDuration="2"
+                                rotationDuration="1"
+                            />
+
+                            <b-form
+                                inline
+                                v-if="renderPickArtist"
+                                @submit.prevent
+                            >
+                                <b-form-group
+                                    id="input-group-artist"
+                                    label="Artist:"
+                                    label-for="input-artist"
+                                >
+                                    <b-form-input
+                                        id="input-artist"
+                                        v-model="artistEntered"
+                                        type="text"
+                                        placeholder="Artist Name"
+                                        required
+                                    ></b-form-input>
+                                </b-form-group>
+                                <b-button
+                                    @click="submitArtist()"
+                                    variant="primary"
+                                    >Submit</b-button
+                                >
+                            </b-form>
+
+                            <b-form
+                                class="text-center"
+                                v-if="renderArtistOptions"
+                                @submit.prevent
+                            >
+                                <b-form-group
+                                    label="Confirm Artist"
+                                    v-slot="{ ariaDescribedby }"
+                                >
+                                    <div
+                                        v-for="artist in artistOptions"
+                                        v-bind:key="artist.id"
+                                    >
+                                        <b-form-radio
+                                            :value="artist.id"
+                                            v-model="artistSelected"
+                                            :aria-describedby="ariaDescribedby"
+                                            name="artist-options"
+                                            >{{ artist.title }}</b-form-radio
+                                        >
+                                    </div>
+                                </b-form-group>
+                                <b-button
+                                    @click="confirmArtist()"
+                                    variant="primary"
+                                    >Confirm Artist</b-button
+                                >
+                            </b-form>
+
+                            <b-form v-if="renderPickSong" @submit.prevent>
+                                <b-form-group
+                                    id="input-group-1"
+                                    label="Song:"
+                                    label-for="input-1"
+                                    description="Name a song by the singer."
+                                >
+                                    <b-form-input
+                                        v-model="song"
+                                        id="input-song"
+                                        type="text"
+                                        placeholder="Enter song"
+                                        required
+                                    ></b-form-input>
+                                </b-form-group>
+                                <b-button
+                                    @click="submitSong()"
+                                    variant="primary"
+                                    >Submit</b-button
+                                >
+                            </b-form>
+                            <b-alert
+                                show
+                                variant="info"
+                                v-if="
+                                    currentUserMove.playerId != dataAuthUser.id
+                                "
+                            >
+                                Other Players Turn
+                            </b-alert>
+                        </div>
+                        <div class="col-md-6 mt-3">
+                            <b-table
+                                striped
+                                hover
+                                :fields="scoreFields"
+                                :items="currentGameScores"
+                            >
+                            </b-table>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -118,14 +188,22 @@ import FlipCountdown from "vue2-flip-countdown";
 
 export default {
     components: { FlipCountdown },
-    props: ["activeGame", "gameScores", "gameScore", "authUser", "artistInfo"],
+    props: [
+        "propActiveGame",
+        "propGameScores",
+        "propGameScore",
+        "propAuthUser",
+        "propArtistInfo",
+        "propInactiveGames",
+        "propCurrentUsers",
+    ],
     computed: {
         pickArtist() {
-            if (this.isEmpty(this.activeGame)) {
+            if (this.isEmpty(this.dataActiveGame)) {
                 return null;
             }
             if (
-                this.currentUserMove.playerId === this.user.id &&
+                this.currentUserMove.playerId === this.dataAuthUser.id &&
                 this.currentUserMove.answerStatus === "pick-artist"
             ) {
                 return true;
@@ -134,11 +212,11 @@ export default {
             }
         },
         renderPickArtist() {
-            if (this.isEmpty(this.activeGame)) {
+            if (this.isEmpty(this.dataActiveGame)) {
                 return null;
             }
             if (
-                this.currentUserMove.playerId === this.user.id &&
+                this.currentUserMove.playerId === this.dataAuthUser.id &&
                 this.currentUserMove.answerStatus === "pick-artist"
             ) {
                 return true;
@@ -147,19 +225,22 @@ export default {
             }
         },
         renderArtistOptions() {
-            if (this.artistOptions === null) {
+            if (
+                this.artistOptions === null
+                //this.currentUserMove.playerId == this.user.id
+            ) {
                 return false;
             } else {
                 return true;
             }
         },
         renderPickSong() {
-            if (this.isEmpty(this.activeGame)) {
+            if (this.isEmpty(this.dataActiveGame)) {
                 return null;
             }
             if (this.renderPickArtist) {
                 return false;
-            } else if (this.currentUserMove.playerId === this.user.id) {
+            } else if (this.currentUserMove.playerId === this.dataAuthUser.id) {
                 return true;
             } else {
                 return false;
@@ -167,13 +248,13 @@ export default {
         },
 
         currentUserMove() {
-            if (this.isEmpty(this.activeGame)) {
+            if (this.isEmpty(this.dataActiveGame)) {
                 return null;
             }
-            let playerTurn = this.scores.filter(function (item) {
+            let playerTurn = this.dataGameScores.filter(function (item) {
                 return item.answerStatus === "player-turn";
             });
-            let pickArtist = this.scores.filter(function (item) {
+            let pickArtist = this.dataGameScores.filter(function (item) {
                 return item.answerStatus === "pick-artist";
             });
             if (playerTurn.length !== 0) {
@@ -183,16 +264,16 @@ export default {
             }
         },
         currentGameScores() {
-            if (this.isEmpty(this.activeGame)) {
+            if (this.isEmpty(this.dataActiveGame)) {
                 return null;
             }
-            let latest = this.scores.filter(function (item) {
+            let latest = this.dataGameScores.filter(function (item) {
                 return item.playerAnswer != null;
             });
             return latest;
         },
         isGameActive() {
-            if (this.isEmpty(this.activeGame)) {
+            if (this.isEmpty(this.dataActiveGame)) {
                 return false;
             } else {
                 return true;
@@ -200,22 +281,28 @@ export default {
         },
     },
     mounted() {
-        Echo.private("game." + this.authUser.id).listen(
+        Echo.private("game." + this.dataAuthUser.id).listen(
             "GameEvent",
             (response) => {
-                console.log(response);
                 this.updateFromResponse(response);
             }
         );
     },
     data() {
         return {
-            scoreFields: ["artistName", "playerAnswer", "answerStatus"],
-            game: JSON.parse(this.activeGame),
-            scores: JSON.parse(this.gameScores),
-            score: JSON.parse(this.gameScore),
-            artistData: this.artistInfo,
-            user: this.authUser,
+            scoreFields: [
+                "artistName",
+                "playerAnswer",
+                "answerStatus",
+                "playerName",
+            ],
+            dataActiveGame: JSON.parse(this.propActiveGame),
+            dataGameScores: JSON.parse(this.propGameScores),
+            dataGameScore: JSON.parse(this.propGameScore),
+            dataInactiveGames: this.propInactiveGames,
+            dataCurrentUsers: this.propCurrentUsers,
+            dataArtistInfo: this.propArtistInfo,
+            dataAuthUser: this.propAuthUser,
             artist: null,
             artistEntered: null,
             artistSelected: null,
@@ -230,7 +317,6 @@ export default {
     },
     methods: {
         submitArtist() {
-            //console.log(this.artistEntered);
             axios
                 .post("/submit-artist", {
                     artist: this.artistEntered,
@@ -243,20 +329,20 @@ export default {
             axios
                 .post("/confirm-artist", {
                     artist: this.artistSelected,
-                    gameId: this.game.id,
+                    gameId: this.dataActiveGame.id,
                 })
                 .then((response) => {
-                    console.log(response.data);
+                    this.artistOptions = null;
+                    this.artistEntered = null;
                     this.updateFromResponse(response);
                 });
         },
         submitSong() {
-            //console.log(this.artistSelected);
             this.renderLoad = true;
             axios
                 .post("/submit-song", {
                     song: this.song,
-                    gameId: this.game.id,
+                    gameId: this.dataActiveGame.id,
                 })
                 .then((response) => {
                     this.song = null;
@@ -264,8 +350,23 @@ export default {
                 });
         },
         updateFromResponse(response) {
-            this.scores = JSON.parse(response.data.gameScores);
-            this.score = JSON.parse(response.data.gameScore);
+            console.log("response");
+            console.log(response);
+            this.dataGameScores = JSON.parse(response.data.gameScores);
+            this.dataGameScore = JSON.parse(response.data.gameScore);
+            if (
+                typeof response.data.artist !== "undefined" &&
+                response.data.artist != null
+            ) {
+                this.dataArtistInfo = response.data.artist;
+            }
+
+            if (
+                typeof response.data.activeGame !== "undefined" &&
+                response.data.activeGame != null
+            ) {
+                this.dataActiveGame = JSON.parse(response.data.activeGame);
+            }
             this.renderLoad = false;
         },
         isEmpty(obj) {

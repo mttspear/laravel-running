@@ -36,7 +36,6 @@ export default {
         Echo.private("game." + this.authUser.id).listen(
             "UserEvent",
             (response) => {
-                console.log("here");
                 this.items = JSON.parse(response.data.currentUsers);
             }
         );
@@ -47,18 +46,15 @@ export default {
     methods: {
         addGame(user) {
             axios.post("/game", { id: +user }).then((response) => {
-                console.log("response");
-                console.log(JSON.parse(response.data.currentUsers));
                 this.items = JSON.parse(response.data.currentUsers);
             });
         },
         startGame(game) {
-            console.log(game);
             axios.post("/start-game", { id: +game }).then((response) => {
                 console.log(response.data);
-                this.items = JSON.parse(response.data.currentUsers);
+                //this.items = JSON.parse(response.data.currentUsers);
+                this.$parent.updateFromResponse(response);
             });
-            console.log();
         },
         addUserFields() {
             //add this into db query

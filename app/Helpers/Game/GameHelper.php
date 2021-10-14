@@ -10,9 +10,10 @@ use App\Models\GameScore;
 class GameHelper
 {
     public $duplicateCheckPercent = 50.0;
-    public $similarCheckPercent = 70.0;
+    public $similarCheckPercent = 55.0;
 
     public $response;
+    public $isGameOver;
     public $artistId;
     public $artistName;
     public $guess;
@@ -156,48 +157,60 @@ class GameHelper
                 Game::setGameOver($this->gameId);
                 //set game score to over
                 GameScore::setGameOver($this->gameId);
+                $this->isGameOver = true;
             }
         }
-        //if other player is incorrect new artist needed
-        $gameScore = new GameScore();
-        $gameScore->playerId = $user->id;
-        $gameScore->gameId = $this->gameId;
-        //if the players answer is incorrect and the other players status is not pick artist
-        if (
-            $this->answerStatus == "incorrect" &&
-            $this->otherPlayer["answerStatus"] != "pick-artist"
-        ) {
-            //if incorrect player will choose the next artist
-            $gameScore->answerStatus = "pick-artist";
+        // if the game is not over set the next move
+        if (!$this->isGameOver) {
+            //if other player is incorrect new artist needed
+            $gameScore = new GameScore();
+            $gameScore->playerId = $user->id;
+            $gameScore->gameId = $this->gameId;
+            Log::info(
+                "gameHelperOtherPlayerAnswerStatus: " .
+                    $this->otherPlayer["answerStatus"]
+            );
+            //if the players answer is incorrect and the other players status is not pick artist
+            if (
+                $this->answerStatus == "incorrect" &&
+                $this->otherPlayer["answerStatus"] != "pick-artist"
+            ) {
+                //if incorrect player will choose the next artist
+                $gameScore->answerStatus = "pick-artist";
+            }
+            // if player incorrect and other is picking the artist use wait turn and null the artist
+            elseif (
+                $this->answerStatus == "incorrect" &&
+                $this->otherPlayer["answerStatus"] == "pick-artist"
+            ) {
+                $gameScore->answerStatus = "wait-turn";
+            } else {
+                //if correct keep the current artist
+                $gameScore->answerStatus = "wait-turn";
+                $gameScore->artistID = $this->artistId;
+                $gameScore->artistName = $this->artistName;
+            }
             $gameScore->save();
+            //Set other player status
+            if ($this->otherPlayer["answerStatus"] != "pick-artist") {
+                GameScore::setOtherPlayerStatus(
+                    $this->gameId,
+                    $user->id,
+                    "player-turn",
+                    null,
+                    $this->artistId,
+                    $this->artistName
+                );
+            }
         }
-        // if player iincorrect and other is picking the artist use wait turn and null the artist
-        elseif (
-            $this->answerStatus == "incorrect" &&
-            $this->otherPlayer["answerStatus"] == "pick-artist"
-        ) {
-            $gameScore->answerStatus = "wait-turn";
-            $gameScore->save();
-        } else {
-            //if correct keep the current artist
-            $gameScore->answerStatus = "wait-turn";
-            $gameScore->artistID = $this->artistId;
-            $gameScore->artistName = $this->artistName;
-            $gameScore->save();
-        }
-
-        GameScore::setOtherPlayerStatus(
-            $this->gameId,
-            $user->id,
-            "player-turn",
-            null,
-            $this->artistId,
-            $this->artistName
-        );
     }
 
     public function setOtherPlayer()
     {
         $this->otherPlayer = GameScore::getOtherPlayersStatus($this->gameId);
+        Log::info(
+            "gameHelperOtherPlayer: " .
+                print_r($this->otherPlayer->getAttributes(), true)
+        );
     }
 }

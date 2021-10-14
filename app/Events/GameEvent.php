@@ -20,18 +20,25 @@ class GameEvent implements ShouldBroadcast
     public $userId;
     public $gameScore;
     public $gameScores;
-    public $currentUsers;
+    public $discogResults;
+    public $activeGame;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($userId, $gameScore, $gameScores, $currentUsers)
-    {
+    public function __construct(
+        $userId,
+        $gameScore,
+        $gameScores,
+        $discogResults = null,
+        $activeGame = null
+    ) {
+        $this->userId = $userId;
         $this->gameScore = $gameScore;
         $this->gameScores = $gameScores;
-        $this->currentUsers = $currentUsers;
-        $this->userId = $userId;
+        $this->discogResults = $discogResults;
+        $this->activeGame = $activeGame;
     }
 
     /**
@@ -50,7 +57,8 @@ class GameEvent implements ShouldBroadcast
             "data" => [
                 "gameScores" => $this->gameScores,
                 "gameScore" => $this->gameScore,
-                "currentUsers" => $this->currentUsers,
+                "artist" => $this->discogResults,
+                "activeGame" => $this->activeGame,
             ],
         ];
     }

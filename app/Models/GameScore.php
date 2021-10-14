@@ -45,12 +45,24 @@ class GameScore extends Model
         return $this->belongsTo(User::class, "playerId");
     }
 
-    public function scopeGetCurrentTurn($query, $gameId)
+    public function scopeGetCurrentUserTurn($query, $gameId)
     {
         return $query
             ->where("gameId", $gameId)
             ->where("playerId", "=", Auth::user()->id)
             ->where("answerStatus", "=", "player-turn")
+            ->first();
+    }
+
+    public function scopeGetCurrentTurn($query, $gameId)
+    {
+        return $query
+            ->where("gameId", $gameId)
+            ->where(function ($query) {
+                $query
+                    ->where("answerStatus", "=", "player-turn")
+                    ->orWhere("answerStatus", "=", "pick-artist");
+            })
             ->first();
     }
 
@@ -64,7 +76,8 @@ class GameScore extends Model
     public function scopeGetGameScore($query, $gameId)
     {
         return $query
-            ->select("playerId", DB::raw("count(*) as score"))
+            ->select("playerId", "name", DB::raw("count(*) as score"))
+            ->join("users", "users.id", "=", "game_score.playerId")
             ->where("gameId", "=", $gameId)
             ->where("answerStatus", "=", "correct")
             ->groupBy("playerId")
@@ -77,16 +90,26 @@ class GameScore extends Model
             ->where("gameId", "=", $gameId)
             ->where("playerId", "!=", Auth::user()->id)
             ->orderBy("updated_at", "DESC")
+            ->orderBy("id", "DESC")
+            ->first();
+    }
+
+    public function scopeGetOtherPlayer($query, $gameId)
+    {
+        return $query
+            ->select("playerId")
+            ->where("gameId", "=", $gameId)
+            ->where("playerId", "!=", Auth::user()->id)
             ->first();
     }
 
     public function scopeSetGameOver($query, $gameId)
     {
         return $query
-            ->where("id", "==", $gameId)
+            ->where("gameId", "=", $gameId)
             ->whereNull("playerAnswer")
             ->update([
-                "answerStatus" => "game-over",
+                "answerStatus" => "complete",
             ]);
     }
 
@@ -135,8 +158,17 @@ class GameScore extends Model
     public function scopeGetGameScores($query, $gameId)
     {
         return $query
+            ->select(
+                "artistName",
+                "playerAnswer",
+                "playerId",
+                "answerStatus",
+                "game_score.updated_at",
+                "name as playerName"
+            )
+            ->join("users", "users.id", "=", "game_score.playerId")
             ->where("gameId", $gameId)
-            ->orderBy("updated_at", "desc")
+            ->orderBy("game_score.updated_at", "desc")
             ->get();
     }
 }

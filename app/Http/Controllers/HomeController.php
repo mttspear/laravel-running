@@ -43,19 +43,23 @@ class HomeController extends Controller
 
         //get previous games
         $inActiveGames = Game::getInactiveGames()->toJson();
+        dd($inActiveGames);
 
-        //get any active game
+        //get active game
         $activeGame = Game::getActiveGame();
         $gameScores = null;
         $gameScore = null;
-        $discogResults = null;
+        $artistById = null;
 
         if ($activeGame->count() != 0) {
             $gameScores = GameScore::GetGameScores($activeGame->id)->toJson();
             $gameScore = GameScore::getGameScore($activeGame->id)->toJson();
             $currentTurn = GameScore::getCurrentTurn($activeGame->id);
             $discog = new Discog();
-            $discogResults = $discog->getArtistById($currentTurn->artistID);
+            if (!is_null($currentTurn->artistID)) {
+                $artistById = $discog->getArtistById($currentTurn->artistID);
+            }
+
             $activeGame = $activeGame->toJson();
         } else {
             $activeGame = false;
@@ -67,7 +71,7 @@ class HomeController extends Controller
             "inActiveGames" => $inActiveGames,
             "gameScores" => $gameScores,
             "gameScore" => $gameScore,
-            "artist" => $discogResults,
+            "artist" => $artistById,
         ]);
     }
 }

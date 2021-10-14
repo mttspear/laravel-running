@@ -60,7 +60,7 @@ class Users
             ->join("users", "users.id", "=", "opponent.playerId")
             ->leftJoin("game", "game.id", "=", "game_score.gameId")
             ->where("game_score.playerId", "=", $id)
-            ->where("status", "!=", "complete")
+            ->wherenotIn("status", ["game-over", "active"])
             ->distinct()
             ->get();
         return $session;

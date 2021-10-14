@@ -21,7 +21,7 @@
     <link href="{{ asset('css/game.css') }}" rel="stylesheet">
 </head>
 <body>
-    <div id="app" :user="1">
+    <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">

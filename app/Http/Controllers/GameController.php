@@ -78,7 +78,20 @@ class GameController extends Controller
         GameScore::where("gameId", $gameId)
             ->where("playerId", "!=", $user->id)
             ->update(["answerStatus" => "wait-turn"]);
-        return ["status" => $gameId];
+
+        $gameScores = GameScore::GetGameScores($gameId)->toJson();
+        $gameScore = GameScore::getGameScore($gameId)->toJson();
+        $otherPlayer = GameScore::getOtherPlayer($gameId);
+        $activeGame = Game::getActiveGame();
+        $activeGame = $activeGame->toJson();
+
+        return $this->gameResponse(
+            $otherPlayer->playerId,
+            $gameScore,
+            $gameScores,
+            null,
+            $activeGame
+        );
     }
 
     public function submitArtist(Request $request)
@@ -105,8 +118,8 @@ class GameController extends Controller
         $gameId = (int) $data["gameId"];
         //update game score table will need to null
         $discog = new Discog();
-        $discogResults = $discog->getArtistById($artistId);
-        $artistName = $discogResults["name"];
+        $artistById = $discog->getArtistById($artistId);
+        $artistName = $artistById["name"];
         //Update player who ansered
         GameScore::setCurrentPlayerStatus(
             $gameId,
@@ -128,12 +141,14 @@ class GameController extends Controller
         );
 
         $gameScores = GameScore::GetGameScores($gameId)->toJson();
-
-        return response()->json([
-            "gameScores" => $gameScores,
-            "gameScore" => GameScore::getGameScore($gameId)->toJson(),
-            "artist" => $discogResults,
-        ]);
+        $gameScore = GameScore::getGameScore($gameId)->toJson();
+        $otherPlayer = GameScore::getOtherPlayer($gameId);
+        return $this->gameResponse(
+            $otherPlayer->playerId,
+            $gameScore,
+            $gameScores,
+            $artistById
+        );
     }
 
     public function submitSong(Request $request)
@@ -169,30 +184,64 @@ class GameController extends Controller
         //update other player
         $gameHelper->setNextMove();
 
-        //return the updated score
         $gameScores = GameScore::GetGameScores($gameId)->toJson();
         $gameScore = GameScore::getGameScore($gameId)->toJson();
 
-        //send score to other player
-        Log::info("otherPlayer:" . print_r($gameHelper->otherPlayer, true));
-        Log::info("gameScore:" . print_r($gameScore, true));
-        event(
-            new GameEvent(
+        Log::info(
+            "gameControllerIsGameOver: " .
+                print_r($gameHelper->isGameOver, true)
+        );
+        if ($gameHelper->isGameOver) {
+            return $this->gameResponse(
                 $gameHelper->otherPlayer->playerId,
                 $gameScore,
-                $gameScores
+                $gameScores,
+                null,
+                false
+            );
+        } else {
+            //return the updated score
+
+            //send score to other player
+            Log::info("gameScores:" . print_r($gameScores, true));
+            Log::info("gameScore:" . print_r($gameScore, true));
+            return $this->gameResponse(
+                $gameHelper->otherPlayer->playerId,
+                $gameScore,
+                $gameScores,
+                null
+            );
+        }
+    }
+
+    public function test(Request $request)
+    {
+        GameScore::setGameOver(18);
+        //dd($foo->playerId);
+    }
+
+    public function gameResponse(
+        $playerId,
+        $gameScore,
+        $gameScores,
+        $discogResults,
+        $activeGame = null
+    ) {
+        event(
+            new GameEvent(
+                $playerId,
+                $gameScore,
+                $gameScores,
+                $discogResults,
+                $activeGame
             )
         );
 
         return response()->json([
             "gameScores" => $gameScores,
             "gameScore" => $gameScore,
+            "artist" => $discogResults,
+            "activeGame" => $activeGame,
         ]);
-    }
-
-    public function test(Request $request)
-    {
-        //event(new NewMessage("hello world"));
-        GameScore::setGameOver(20);
     }
 }
