@@ -43,7 +43,7 @@ class HomeController extends Controller
 
         //get previous games
         $inActiveGames = Game::getInactiveGames()->toJson();
-        dd($inActiveGames);
+        //dd($inActiveGames);
 
         //get active game
         $activeGame = Game::getActiveGame();
