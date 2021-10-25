@@ -15,3 +15,5 @@ mix.js("resources/js/app.js", "public/js")
     .sourceMaps()
     .vue()
     .sass("resources/sass/app.scss", "public/css");
+
+mix.js("resources/js/three.js", "public/js");

@@ -16,6 +16,11 @@ Vue.use(VueProgress, {
     defaultShape: "circle",
 });
 
+//require("./three");
+
+//import { EffectComposer } from "/node_modules/three/examples/jsm/postprocessing/EffectComposer.js";
+//import { TextGeometry } from "./jsm/geometries/TextGeometry.js";
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -63,9 +68,7 @@ const app = new Vue({
     data() {
         return {};
     },
-    created() {
-        //console.log(this.$root);
-    },
+    created() {},
 
     methods: {},
 });
