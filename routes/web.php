@@ -19,6 +19,10 @@ Route::get("/", function () {
     return view("welcome");
 });
 
+Route::get("/test", function () {
+    return view("test");
+});
+
 Route::get("/user", [UserController::class, "show"]);
 
 Auth::routes();
@@ -37,5 +41,3 @@ Route::post("/submit-artist", [GameController::class, "submitArtist"]);
 Route::post("/confirm-artist", [GameController::class, "confirmArtist"]);
 
 Route::post("/submit-song", [GameController::class, "submitSong"]);
-
-Route::get("/test", [GameController::class, "test"]);

@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>OC Joggers</title>
+        <title>Laravel</title>
 
         <meta name="csrf-token" content="{{ csrf_token()}}" />
 
@@ -20,13 +20,25 @@
             body {
                 font-family: 'Nunito', sans-serif;
             }
-            .mw-50{
-                max-width: 50%;
-            }
+
+            body {
+				background-color: #326696;
+				margin: 0px;
+				overflow: hidden;
+				font-family:Monospace;
+				font-size:13px;
+				text-align:center;
+				font-weight: bold;
+				text-align:center;
+			}
+
+			a {
+				color:#0078ff;
+			}
         </style>
     </head>
     <body class="antialiased">
-        <div class="relative flex items-top justify-center min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center py-4 sm:pt-0">
+        <div>
             @if (Route::has('login'))
                 <div class="hidden fixed top-0 right-0 px-6 py-4 sm:block">
                     @auth
@@ -42,29 +54,44 @@
             @endif
 
             <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
-                <div class="flex justify-center">
-                    <img class="mw-50" src={{ asset('img/logo.png') }}>
-                </div>
+            <script type="text/javascript" src="{{ asset('js/detector.js') }}"></script>
+            <script type="module" src="{{ asset('js/threecloud.js') }}"></script>
 
-                <div>
-                    <div class="mt-2 text-gray-600 dark:text-gray-400 text-md">
-                        Log in to play.  Players take turns guessing songs by artists.  An incorrect guess will let a player chouse the next artist in the game.  First one to 10 wins. 
-                    </div>
-                </div>
+            <script id="vs" type="x-shader/x-vertex">
+
+                varying vec2 vUv;
+
+                void main() {
+
+                    vUv = uv;
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+
+                }
+
+            </script>
+            <script id="fs" type="x-shader/x-fragment">
+
+                uniform sampler2D map;
+
+                uniform vec3 fogColor;
+                uniform float fogNear;
+                uniform float fogFar;
+
+                varying vec2 vUv;
+
+                void main() {
+
+                    float depth = gl_FragCoord.z / gl_FragCoord.w;
+                    float fogFactor = smoothstep( fogNear, fogFar, depth );
+
+                    gl_FragColor = texture2D( map, vUv );
+                    gl_FragColor.w *= pow( gl_FragCoord.z, 20.0 );
+                    gl_FragColor = mix( gl_FragColor, vec4( fogColor, gl_FragColor.w ), fogFactor );
+
+                }
+
+                </script>
             </div>
         </div>
-        <div id="app"> </div>
-        <script src="{{ asset('js/app.js') }}"> </script>
-        
-        <script>
-            Echo.channel('home')
-                .listen('NewMessage', (e) =>{
-                    console.log(e);
-                })
-            Echo.channel('game')
-            .listen('NewMessage', (e) =>{
-                console.log(e);
-            })
-        </script>
     </body>
 </html>

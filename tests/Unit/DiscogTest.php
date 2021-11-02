@@ -23,18 +23,4 @@ class DiscogTest extends TestCase
         $this->assertTrue(isset($discogResults["tracklist"]));
         $this->assertTrue(isset($discogResults["tracklist"][0]["title"]));
     }
-
-    /**
-     * Test the get song api
-     *
-     * @return void
-     */
-    public function test_getSong()
-    {
-        $discog = new Discog();
-        $artistById = $discog->getArtistById($artistId);
-
-        $this->assertTrue(isset($discogResults["tracklist"]));
-        $this->assertTrue(isset($discogResults["tracklist"][0]["title"]));
-    }
 }

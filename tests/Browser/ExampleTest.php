@@ -16,8 +16,8 @@ class ExampleTest extends DuskTestCase
     public function testBasicExample()
     {
         $this->browse(function (Browser $browser) {
-            $browser->visit("/")->assertSee("PHP");
-            $browser->screenshot("filename");
+            $browser->visit("/");
+            //$browser->screenshot("filename");
         });
     }
 }
