@@ -16,15 +16,38 @@ var windowHalfY = window.innerHeight / 2;
 
 //init();
 
-function init() {
-    container = document.createElement("div");
-    document.body.appendChild(container);
+function initCloud() {
+    //container = document.createElement("div");
+    //document.body.appendChild(container);
+
+    container = document.getElementById("clouds");
+
 
     var loader = new THREE.TextureLoader();
     var backgroundTexture = loader.load("img/sky2.jpg");
 
+    // Bg gradient
+
+    var canvas = document.createElement('canvas');
+    canvas.width = 32;
+    canvas.height = window.innerHeight;
+
+    var context = canvas.getContext('2d');
+
+    var gradient = context.createLinearGradient(0, 0, 0, canvas.height);
+    //gradient.addColorStop(0, "#1e4877");
+    //gradient.addColorStop(0.5, "#4584b4");
+
+    context.fillStyle = gradient;
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    container.style.background = 'url(' + canvas.toDataURL('image/png') + ')';
+    container.style.backgroundSize = '32px 100%';
+
+    //
+
     camera = new THREE.PerspectiveCamera(
-        30,
+        50,
         window.innerWidth / window.innerHeight,
         1,
         3000
@@ -32,7 +55,7 @@ function init() {
     camera.position.z = 6000;
 
     scene = new THREE.Scene();
-    scene.background = backgroundTexture;
+    //scene.background = backgroundTexture;
 
     var texture = new THREE.TextureLoader().load("img/cloud10.png");
     texture.magFilter = THREE.LinearMipMapLinearFilter;
@@ -63,8 +86,7 @@ function init() {
         geometry.rotateZ(Math.random() * Math.PI);
         geometry.applyMatrix4(
             new THREE.Matrix4().makeTranslation(
-                Math.random() * 1000 - 500,
-                -Math.random() * Math.random() * 200 - 15,
+                Math.random() * 1000 - 500, -Math.random() * Math.random() * 200 - 15,
                 i
             )
         );
@@ -86,9 +108,11 @@ function init() {
     mesh.position.z = -8000;
     scene.add(mesh);
 
-    renderer = new THREE.WebGLRenderer({ antialias: false });
+    renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     //document.body.appendChild(renderer.domElement);
+    renderer.domElement.id = 'cloudCanvas';
+
     container.appendChild(renderer.domElement);
 
     document.addEventListener("mousemove", onDocumentMouseMove, false);
@@ -107,8 +131,8 @@ function onWindowResize(event) {
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-function animate() {
-    requestAnimationFrame(animate);
+function animateCloud() {
+    requestAnimationFrame(animateCloud);
     var position = ((Date.now() - start_time) * 0.03) % 8000;
 
     camera.position.x += (mouseX - camera.position.x) * 0.01;
@@ -117,6 +141,11 @@ function animate() {
 
     renderer.render(scene, camera);
 }
+window.onload = function() {
 
-init();
-animate();
+}
+
+window.addEventListener('load', function() {
+    //initCloud();
+    //animateCloud();
+});
