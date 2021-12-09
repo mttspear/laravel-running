@@ -52,12 +52,6 @@
 
         }
 
-        .middle {
-            background: linear-gradient(to bottom, #000 0%, #3e99d1 92%, #fff 100%);
-            position: absolute;
-        }
-
-
         .bottom ::before {
             position: absolute;
             z-index: 1;
