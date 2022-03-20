@@ -4,13 +4,10 @@ import * as BufferGeometryUtils from "three/examples/jsm/utils/BufferGeometryUti
 //Declare three.js variables
 var cloudCamera,
     spaceCamera,
-
     spaceScene,
     cloudScene,
-
     spaceRenderer,
     cloudRenderer,
-
     spaceMesh,
     randomX,
     randomY,
@@ -29,9 +26,6 @@ var windowHalfY = window.innerHeight / 2;
 
 //assign three.js objects to each variable
 function initSpace() {
-    //container = document.getElementById("space");
-    //document.body.appendChild(container);
-
     randomY = Math.random() * 6 - 5;
     randomX = Math.random() * 6 - 5;
     //camera
@@ -63,16 +57,7 @@ function initSpace() {
 
     // add the image to the scene
     spaceScene.add(spaceMesh);
-    console.log(randomX);
-    //tween = new TWEEN.Tween(mesh.position);
-    //tween.to({ x: randomX, y: randomY }, 1);
-    //tween.start();
-    //TWEEN.update();
-    //tween.onUpdate(function(object) {
-    //    console.log(object.x);
-    //});
 
-    // Add a point light with #fff color, .7 intensity, and 0 distance
     var light = new THREE.PointLight(0xffffff, 1, 0);
 
     // Specify the light's position
@@ -87,77 +72,47 @@ function initSpace() {
     spaceRenderer.setSize(window.innerWidth, window.innerHeight);
 
     //add the renderer to the html document body
-    spaceRenderer.domElement.id = 'spaceCanvas';
+    spaceRenderer.domElement.id = "spaceCanvas";
     spaceContainer = document.getElementById("space");
     spaceContainer.appendChild(spaceRenderer.domElement);
 }
 
 function addSphere() {
-    console.log('add sphere')
-        // The loop will move from z position of -1000 to z position 1000, adding a random particle at each position.
-    for (var z = -3000; z < -500; z += 3) {
-        // Make a sphere (exactly the same as before).
+    for (var z = -3000; z < -500; z += 2) {
         var geometry = new THREE.SphereGeometry(0.5, 32, 32);
         var material = new THREE.MeshBasicMaterial({ color: 0xffffff });
         var sphere = new THREE.Mesh(geometry, material);
 
         // This time we give the sphere random x and y positions between -500 and 500
-        sphere.position.x = Math.random() * 1000 - 500;
+        sphere.position.x = Math.random() * 2000 - 1000;
         sphere.position.y = Math.random() * 1000 - 500;
-
-        // Then set the z position to where it is in the loop (distance of camera)
-        ///sphere.position.z = Math.random() * 1000 - 500;
         sphere.position.z = z;
-        //console.log(sphere.position.z);
 
-        // scale it up a bit
         sphere.scale.x = sphere.scale.y = 2;
 
-        //add the sphere to the scene
         spaceScene.add(sphere);
 
-        //finally push it to the stars array
         stars.push(sphere);
     }
 }
 
 function animateStars() {
-    // loop through each star
     for (var i = 0; i < stars.length; i++) {
         let star = stars[i];
-        // and move it forward dependent on the mouseY position.
-        star.position.y += i / 1000;
-        // if the particle is too close move it to the back
+        star.position.y += i / 3000; // this controlls the fall speed
         if (star.position.y > 500) star.position.y = -500;
     }
 }
 
 function animateImage() {
-
-    // just use tweens.
-    //gsap.to(mesh.position, {x: Math.floor((Math.random() * 600) - 300), duration: 5, ease: "elastic"});
-    //gsap.to(mesh.position, {y: Math.floor((Math.random() * 600) - 300), duration: 5, ease: "elastic"});
-    //gsap.to(mesh.position, {z: Math.floor((Math.random() * 600) - 300), duration: 5, ease: "elastic"});
-
-    // use a timeline (and call this function again on complete).
-    // This uses GSAP V3
     var timeline = gsap.timeline({ onComplete: animateImage });
-
-    // animate mesh.position.x,
-    // a random number between -300 and 300,
-    // for 2 seconds.
-
-    var speed = 500;
-
-    var xTo = Math.floor((Math.random() * 10) - 5);
-    var yTo = Math.floor((Math.random() * 6) - 3);
-    var zTo = Math.floor((Math.random() * 18) - 14);
-
+    var speed = 400;
+    var xTo = Math.floor(Math.random() * 10 - 5);
+    var yTo = Math.floor(Math.random() * 4 - 0); //4 is max 0 is min
+    var zTo = Math.floor(Math.random() * 18 - 14);
     var toVector = new THREE.Vector3(xTo, yTo, zTo);
     var distance = toVector.distanceTo(spaceMesh.position);
     var duration = (distance / speed) * 1000; // in milliseconds
-
-    console.log(duration)
 
     timeline.to(
         spaceMesh.position, {
@@ -165,14 +120,11 @@ function animateImage() {
             y: yTo,
             z: zTo,
             duration: duration,
-            ease: "Circular"
+            ease: "Circular",
         },
         0
     );
-
-    console.log('hello')
 }
-
 
 function renderSpace() {
     //get the frame
@@ -183,34 +135,27 @@ function renderSpace() {
 }
 
 function initCloud() {
-    //container = document.createElement("div");
-    //document.body.appendChild(container);
-
     cloudContainer = document.getElementById("clouds");
-
 
     var loader = new THREE.TextureLoader();
     var backgroundTexture = loader.load("img/sky2.jpg");
 
     // Bg gradient
 
-    var canvas = document.createElement('canvas');
+    var canvas = document.createElement("canvas");
     canvas.width = 32;
     canvas.height = window.innerHeight;
 
-    var context = canvas.getContext('2d');
+    var context = canvas.getContext("2d");
 
     var gradient = context.createLinearGradient(0, 0, 0, canvas.height);
-    //gradient.addColorStop(0, "#1e4877");
-    //gradient.addColorStop(0.5, "#4584b4");
 
     context.fillStyle = gradient;
     context.fillRect(0, 0, canvas.width, canvas.height);
 
-    cloudContainer.style.background = 'url(' + canvas.toDataURL('image/png') + ')';
-    cloudContainer.style.backgroundSize = '32px 100%';
-
-    //
+    cloudContainer.style.background =
+        "url(" + canvas.toDataURL("image/png") + ")";
+    cloudContainer.style.backgroundSize = "32px 100%";
 
     cloudCamera = new THREE.PerspectiveCamera(
         50,
@@ -219,9 +164,9 @@ function initCloud() {
         3000
     );
     cloudCamera.position.z = 6000;
+    cloudCamera.position.y = 50;
 
     cloudScene = new THREE.Scene();
-    //scene.background = backgroundTexture;
 
     var texture = new THREE.TextureLoader().load("img/cloud10.png");
     texture.magFilter = THREE.LinearMipMapLinearFilter;
@@ -247,7 +192,7 @@ function initCloud() {
     var geo = new THREE.PlaneBufferGeometry(64, 64);
 
     for (var i = 0; i < 8000; i++) {
-        // instead of creating a new geometry, we just clone the bufferGeometry instance
+        // instead of creating a new geometry clone the bufferGeometry instance
         var geometry = geo.clone();
         geometry.rotateZ(Math.random() * Math.PI);
         geometry.applyMatrix4(
@@ -263,10 +208,8 @@ function initCloud() {
 
         clouds.push(geometry);
     }
-    // Here is the big boy in action
     var geometriesCubes = BufferGeometryUtils.mergeBufferGeometries(clouds);
 
-    // now we got 1 mega big mesh with 10 000 cubes in it
     var mesh = new THREE.Mesh(geometriesCubes, material);
     cloudScene.add(mesh);
 
@@ -275,9 +218,11 @@ function initCloud() {
     cloudScene.add(mesh);
 
     cloudRenderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
-    cloudRenderer.setSize(window.innerWidth, window.innerHeight);
-    //document.body.appendChild(renderer.domElement);
-    cloudRenderer.domElement.id = 'cloudCanvas';
+    cloudRenderer.setSize(
+        document.documentElement.clientWidth,
+        window.innerHeight
+    );
+    cloudRenderer.domElement.id = "cloudCanvas";
 
     cloudContainer.appendChild(cloudRenderer.domElement);
 
@@ -286,8 +231,8 @@ function initCloud() {
 }
 
 function onDocumentMouseMove(event) {
-    mouseX = (event.clientX - windowHalfX) * 0.25;
-    mouseY = (event.clientY - windowHalfY) * 0.15;
+    mouseX = (event.clientX - windowHalfX) * 0.05;
+    mouseY = (event.clientY - windowHalfY) * 0.005;
 }
 
 function onWindowResize(event) {
@@ -302,13 +247,13 @@ function animateCloud() {
     var position = ((Date.now() - start_time) * 0.03) % 8000;
 
     cloudCamera.position.x += (mouseX - cloudCamera.position.x) * 0.01;
-    cloudCamera.position.y += (-mouseY - cloudCamera.position.y) * 0.01;
+    cloudCamera.position.y += (-mouseY - cloudCamera.position.y) * 0.0025;
     cloudCamera.position.z = -position + 8000;
 
     cloudRenderer.render(cloudScene, cloudCamera);
 }
 
-window.addEventListener('load', function() {
+window.addEventListener("load", function() {
     initSpace();
     initCloud();
 
@@ -316,5 +261,5 @@ window.addEventListener('load', function() {
 
     addSphere();
     renderSpace();
-    animateImage()
+    animateImage();
 });
