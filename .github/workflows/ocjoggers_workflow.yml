@@ -12,7 +12,7 @@ jobs:
         host: ${{ secrets.OCJ_HOST }}
         username: ${{ secrets.OCJ_USER }}
         key: ${{ secrets.OCJ_SECRET }}
-        passphrase: ${{ secrets.OCJ_passphrase }}
+        passphrase: ${{ secrets.OCJ_PASS }}
         port: 22
         script: | 
           cd /home
