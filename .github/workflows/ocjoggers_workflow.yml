@@ -9,8 +9,8 @@ jobs:
     - name: deploy to ocjoggers
       uses: appleboy/ssh-action@master
       with:
-        host: 165.232.140.240
-        username: ocjoggers
+        host: ${{ secrets.OCJ_HOST }}
+        username: ${{ secrets.OCJ_USER }}
         key: ${{ secrets.OCJ_SECRET }}
         port: 22
         script: | 
