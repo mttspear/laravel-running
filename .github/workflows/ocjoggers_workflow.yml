@@ -1,5 +1,7 @@
 name: Deployment Workflow
-on: [push]
+on: 
+  push:
+    branches: [ main ]
 
 jobs: 
   job_one:
@@ -15,6 +17,6 @@ jobs:
         passphrase: ${{ secrets.OCJ_PASS }}
         port: 22
         script: | 
-          cd /home
-          git pull origin master
+          cd /var/www/laravel
+          git pull origin main
           git status
