@@ -181,4 +181,7 @@
             </div>
         </div>
     </div>
+    <div class="row text-center" style ="width:100%">
+        <p style="color:white">loading...</p>
+    </div>
 </div>
