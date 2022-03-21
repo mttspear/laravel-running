@@ -4,7 +4,7 @@ on: [push]
 jobs: 
   job_one:
     name: Deploy
-    run-on: ubuntu-latest
+    runs-on: ubuntu-latest
     steps:
     - name: deploy to ocjoggers
       uses: appleboy/ssh-action@master
