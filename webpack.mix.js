@@ -16,6 +16,8 @@ mix.js("resources/js/app.js", "public/js")
     .vue()
     .sass("resources/sass/app.scss", "public/css");
 
+mix.sass("resources/sass/home.scss", "public/css")
+
 mix.js("resources/js/three.js", "public/js");
 mix.js("resources/js/threecloud.js", "public/js");
 mix.js("resources/js/homepage.js", "public/js");

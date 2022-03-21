@@ -4,5 +4,6 @@
     "/js/threecloud.js": "/js/threecloud.js",
     "/js/homepage.js": "/js/homepage.js",
     "/js/detector.js": "/js/detector.js",
-    "/css/app.css": "/css/app.css"
+    "/css/app.css": "/css/app.css",
+    "/css/home.css": "/css/home.css"
 }
