@@ -174,7 +174,7 @@
                 <div class="container star-container">
                     <div class="row">
                         <div class="col-xs-12">
-                            <h1>OCJogger.com</h1>
+                            <h1>OCJoggers.com</h1>
                         </div>
 
                         <div class="gg">
