@@ -390,9 +390,7 @@
             }
             if (preloader.style.opacity > 0) {
                 preloader.style.opacity -= 0.1;
-                console.log(preloader.style.opacity)
             } else {
-                console.log('here')
                 clearInterval(fadeEffect);
                 $("#preloader").remove();
             }

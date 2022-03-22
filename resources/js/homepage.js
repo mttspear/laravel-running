@@ -78,7 +78,7 @@ function initSpace() {
 }
 
 function addSphere() {
-    for (var z = -3000; z < -500; z += 2) {
+    for (var z = -3000; z < -500; z += 1) {
         var geometry = new THREE.SphereGeometry(0.5, 32, 32);
         var material = new THREE.MeshBasicMaterial({ color: 0xffffff });
         var sphere = new THREE.Mesh(geometry, material);
@@ -240,6 +240,11 @@ function onWindowResize(event) {
     cloudCamera.updateProjectionMatrix();
 
     cloudRenderer.setSize(window.innerWidth, window.innerHeight);
+
+    spaceCamera.aspect = window.innerWidth / window.innerHeight;
+    spaceCamera.updateProjectionMatrix();
+
+    spaceRenderer.setSize(window.innerWidth, window.innerHeight);
 }
 
 function animateCloud() {
