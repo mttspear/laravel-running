@@ -20,7 +20,8 @@ Route::get("/", function () {
 });
 
 Route::get("/test", function () {
-    return view("test");
+    dd('here');
+    return view("testz");
 });
 
 Route::get("/user", [UserController::class, "show"]);
@@ -41,3 +42,7 @@ Route::post("/submit-artist", [GameController::class, "submitArtist"]);
 Route::post("/confirm-artist", [GameController::class, "confirmArtist"]);
 
 Route::post("/submit-song", [GameController::class, "submitSong"]);
+
+Route::get("/mission-22", function () {
+   return \File::get(public_path() . '/mission-22.html');
+});
