@@ -20,19 +20,19 @@
         }
         
         .first {
-            fill: #606060;
+            fill: #a9b6d8;
         }
         
         .second {
-            fill: #6bb2c6;
+            fill: #909fc8;
         }
         
         .third {
-            fill: pink;
+            fill: #6475a3;
         }
         
         .forth {
-            fill: sandybrown;
+            fill: #455586;
         }
         
         .line {
@@ -40,11 +40,29 @@
         }
         
         .year-div {
-            background-color: aliceblue;
+            background-color: #B42033;
+            color: white;
+            cursor: pointer;
+            border-color: white;
+            border-style: solid;
+            border-left-width: 2px;
+            border-right-width: 2px;
         }
         
         .year-div-active {
-            background-color: lightblue;
+            background-color: #3C3B6E;
+            color: white;
+            cursor: pointer;
+        }
+        
+        text {
+            font-size: 2px;
+        }
+        
+        @media (max-width: 400px) {
+            text {
+                font-size: 20px;
+            }
         }
     </style>
 </head>
@@ -62,22 +80,16 @@
             <h2>2018</h2>
         </div>
 
-        <svg viewBox="0 0 100 100">
-            	<polygon class="first" points="50 15, 100 100, 0 100"/>
-                <polygon class="second" points="25 50, 50 100, 0 100"/>
-                <polygon class="third" points="60 75, 100 100, 20 100"/>
-                <polygon class="forth" points="25 80, 50 100, 0 100"/>
-                <text x="12" y="82" font-family="Verdana" font-size="1.25" fill="black">MEMORIALS</text>
-                <text x="12" y="83" font-family="Verdana" font-size="1.25" fill="black">$58,713.00</text>
-                <polygon class="line" points="25 81.9, 25 82, 20 82, 20 81.9"/>
-        </svg>
+        <div class="row text-center">
+            <img src="/img/2018.jpg">
+        </div>
     </div>
     <div id="2019_mtn" class="container" style="display: none;">
         <div class="row text-center">
             <h2>2019</h2>
         </div>
         <div class="row text-center">
-            <img src="/img/financials.jpg">
+            <img src="/img/2019.jpg">
         </div>
     </div>
     <div id="2020_mtn" class="container">
@@ -85,15 +97,9 @@
             <h2>2020</h2>
         </div>
 
-        <svg viewBox="0 0 100 100">
-            	<polygon class="first" points="60 0, 100 100, 25 100"/>
-                <polygon class="second" points="25 25, 50 100, 0 100"/>
-                <polygon class="third" points="60 75, 100 100, 20 100"/>
-                <polygon class="forth" points="25 80, 50 100, 0 100"/>
-                <text x="12" y="82" font-family="Verdana" font-size="1.25" fill="black">MEMORIALS</text>
-                <text x="12" y="83" font-family="Verdana" font-size="1.25" fill="black">$57,368.00</text>
-                <polygon class="line" points="25 81.9, 25 82, 20 82, 20 81.9"/>
-        </svg>
+        <div class="row text-center">
+            <img src="/img/2020.jpg">
+        </div>
 
         <canvas class="dnut_chart" id="2020_chart" width="800" height="800"></canvas>
     </div>
