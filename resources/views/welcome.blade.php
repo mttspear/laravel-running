@@ -209,7 +209,7 @@
 
                     <div class="row">
                         <div id="second-header" class="second-header align-self-end text-end">
-                            <h2>App Development. Web Development. Python Analysis and Scripting</h2>
+                            <h2>Resume | Projects</h2>
                         </div>
 
 
