@@ -19,10 +19,10 @@ Route::get("/", function () {
     return view("welcome");
 });
 
-Route::get("/test", function () {
-    dd('here');
-    return view("testz");
+Route::get("/heartbeat", function () {
+    return '&#9825;';
 });
+
 
 Route::get("/user", [UserController::class, "show"]);
 
@@ -42,6 +42,10 @@ Route::post("/submit-artist", [GameController::class, "submitArtist"]);
 Route::post("/confirm-artist", [GameController::class, "confirmArtist"]);
 
 Route::post("/submit-song", [GameController::class, "submitSong"]);
+
+Route::get("/running", function () {
+    return view('projects.running');
+});
 
 Route::get("/mission-22", function () {
    return \File::get(public_path() . '/mission-22.html');
