@@ -1,17 +1,15 @@
-@extends('layouts.static')
+@extends('layouts.project')
 
 @section('title', 'Running Analysis')
 
-@section('content')
-    <div class="row g-5">
-        <div class="col-md-8">
-            <h3 class="pb-4 mb-4 fst-italic border-bottom">
-                From the Firehose
-            </h3>
+@section('project-title', 'A look at the Top 1000 Track Times')
 
-            <article class="blog-post">
-                <h2 class="blog-post-title">Sample blog post</h2>
-                <p class="blog-post-meta">January 1, 2021 by <a href="#">Mark</a></p>
+@section('date', 'JAN. 23, 2023, AT 6:00 AM')
+
+@section('author', 'A look at the Top 1000 Track Times')
+
+@section('project')
+
 
                 <p>This blog post shows a few different types of content that’s supported and styled with Bootstrap. Basic
                     typography, lists, tables, images, code, and more are all supported as expected.</p>

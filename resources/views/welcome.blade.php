@@ -28,6 +28,7 @@
 
     <link href="{{ asset('css/home.css') }}" rel="stylesheet" type="text/css">
     <style>
+        
         body {
             font-family: 'Nunito', sans-serif;
 
@@ -37,6 +38,11 @@
             position: absolute;
             bottom: 0;
             left: 0;
+        }
+
+        .second-header a {
+            color: #fff;
+            text-decoration: none
         }
 
         #spaceCanvas {
@@ -160,7 +166,6 @@
             outline: none !important;
             -webkit-tap-highlight-color: transparent;
         }
-
     </style>
 </head>
 
@@ -174,7 +179,7 @@
                 <div class="container star-container">
                     <div class="row">
                         <div class="col-xs-12">
-                            <h1>OCJoggers.com</h1>
+                            <h1>Matt Spear</h1>
                         </div>
 
                         <div class="gg">
@@ -209,7 +214,7 @@
 
                     <div class="row">
                         <div id="second-header" class="second-header align-self-end text-end">
-                            <h2>Resume | Projects</h2>
+                            <h2><a href="#projects">Projects </a> | <a href="#about">About Me</a></h2>
                         </div>
 
 
@@ -222,9 +227,20 @@
             </section>
             <section class="transition-section">
                 <div class="container">
-                    <div class="row text-center mt-10">
-                        <h2>Hand crafted digital solutions for your buisness needs</h2>
-                        <p>Expert in Laravel, SQL, PHP, Excel</p>
+                    <div class="row mt-10">
+                        <h2 id="about">About Me</h2>
+
+                        <p>Hi, my name is Matt and I work remotely as an application developer and analyst. I have over
+                            8 years experience with SQL, PHP and Javascript. </p>
+
+                        <p>I have worked for companies ranging from fourtune 500 companies to startups. I'm a problem
+                            solver who uses a variaty of techonologies to analyze and solve problems. </p>
+
+                        <p>My analytical skills have been used to solve processes via software, understand problems via
+                            reporting and forecast financials. I have a strong data background having worked as both a
+                            developer and in reporting. I have an understanding of databases, application level code,
+                            api's, how data is structured, how to access it and how to analyze it.</p>
+
                     </div>
                 </div>
                 <div id="clouds" class="container-row"></div>
@@ -253,7 +269,7 @@
                             </div>
                         </div>
 
-                        <h2>Project Examples and Links</h2>
+                        <h2 id="projects">Projects</h2>
                         <div class="gg">
                             <div class="gg-symbol gg-symbol--rect gg-symbol--8 gg-symbol--gradient"
                                 style="background: linear-gradient(90deg, rgb(242, 159, 255) 0%, rgb(124, 153, 255) 100%); opacity: 1; transform: translate(0px, 0px);">
@@ -270,76 +286,62 @@
 
                 </div>
 
-                <div class="row">
-                    <div class="col-sm-4">
-                        <div class="card border-0">
-                            <div class="card-body text-center">
-                                <h5 class="card-title">Sample Laravel Application</h5>
-                                <p class="card-text text-start">Built using Laravel, Vue, Websockets and API's this
-                                    game
-                                    allows two players to pick an artist then go back and forth naming songs by selected
-                                    artist. First to ten wins.</p>
-                                <a href="{{ url('/login') }}" class="btn glow-on-hover">View Game</a>
-                            </div>
-                        </div>
-                    </div>
+                <div class="container">
+                    <div class="row">
 
-                    <div class="col-sm-4">
-                        <div class="card border-0">
-                            <div class="card-body text-center">
-                                <h5 class="card-title">Running Analysis</h5>
-                                <p class="card-text text-start">Built using Python, Jupyter, and Pandas this project
-                                    looks at
-                                    the top 1,000 times for track events to draw a number of conclusions about the data.
-                                </p>
-                                <a target="_blank" href="{{ url('https://www.kaggle.com/code/mattspear/notebookd01a39718e/notebook') }}" class="btn glow-on-hover">View Notebook</a>
+                        <!-- First column -->
+                        <div class="col-md">
+
+                            <!-- Card -->
+                            <div class="card card border-0">
+                                <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+                                    <img src="{{ asset('img/track-running.jpg') }}" class="img-fluid" />
+                                    <a href="#!">
+                                        <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                                    </a>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">Top Running Times Analysis</h5>
+                                    <p class="card-text">Jupyter Notebook analytical review of top 1000 running times.
+                                    </p>
+                                </div>
+                                <a Target=_blank href="https://www.kaggle.com/embed/mattspear/runninganalysis?kernelSessionId=119597564" class="stretched-link"></a>
                             </div>
+                            <!-- Card -->
+
                         </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="card border-0">
-                            <div class="card-body text-center">
-                                <h5 class="card-title">Resin Projects</h5>
-                                <p class="card-text text-start">Built using Masonry.js this custom site displays
-                                    photography
-                                    and videography.</p>
-                                <a target="_blank" href="{{ url('http://resinprojects.com/') }}" class="btn glow-on-hover">View Site</a>
+                        <!-- First column -->
+
+                        <!-- Second column -->
+                        <div class="col-md">
+
+                            <!-- Card -->
+                            <div class="card border-0">
+                                <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+                                    <img src="{{ asset('img/song.jpg') }}" class="img-fluid" />
+                                    <a href="#!">
+                                        <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);">
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">Laravel Application
+                                    </h5>
+                                    <p class="card-text">Application using Laravel, Vue2, Websockets and API's</p>
+                                </div>
+                                <a href="{{ route('song') }}" class="stretched-link"></a>
                             </div>
+                            <!-- Card -->
+
                         </div>
+                        <!-- Second column -->
+
+
                     </div>
                 </div>
 
+                @include('layouts.footer')
 
-                <div class="row">
-                    <div class="col-md-12 text-center">
-                        <div class="wrapper">
-                            <a href="https://www.upwork.com/freelancers/~01d673de10ec509b4a" target=”_blank”>
-                                <div class="icon upwork">
-
-                                    <div class="tooltip">Upwork</div>
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56.7 56.7">
-                                        <!--! Font Awesome Free 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. -->
-                                        <path
-                                            d="M0 0v56.7h56.7V0H0zm20.3 14.6h5.6a48.4 48.4 0 0 0 5.6 12.1c1.6-5.5 5.6-9 10.9-9a11.3 11.3 0 0 1 0 22.5 14 14 0 0 1-7.7-2.2l-2.4 11.9h-5.7l3.5-16.3a51.5 51.5 0 0 1-4-6.7v2.5a10.9 10.9 0 0 1-21.8 0V14.7h5.4v14.6a5.3 5.3 0 1 0 10.6 0V14.6zm22.2 8.8c-4.1 0-5.4 4-5.8 6.4v.1l-.6 2.2a10.2 10.2 0 0 0 6.3 2.5 5.9 5.9 0 0 0 5.7-5.6 5.6 5.6 0 0 0-5.6-5.6z" />
-                                    </svg>
-
-                                </div>
-                            </a>
-                            <a href="https://github.com/mttspear" target=”_blank”>
-                                <div class="icon github">
-                                    <div class="tooltip">Github</div>
-                                    <span><i class="fab fa-github"></i></span>
-                                </div>
-                            </a>
-                            <a href="https://www.linkedin.com/in/matt-spear-b2949064/" target=”_blank”>
-                                <div class="icon linkedin">
-                                    <div class="tooltip">LinkedIn</div>
-                                    <span><i class="fab fa-linkedin-in"></i></span>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -404,8 +406,8 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.0.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
-integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
-crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <script type="text/javascript" src="{{ asset('js/detector.js') }}"></script>
 <script type="module" src="{{ asset('js/homepage.js') }}"></script>

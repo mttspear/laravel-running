@@ -17,7 +17,7 @@ use App\Http\Controllers\GameController;
 
 Route::get("/", function () {
     return view("welcome");
-});
+})->name("index");
 
 Route::get("/heartbeat", function () {
     return '&#9825;';
@@ -45,7 +45,11 @@ Route::post("/submit-song", [GameController::class, "submitSong"]);
 
 Route::get("/running", function () {
     return view('projects.running');
-});
+})->name("running");
+
+Route::get("/song-application", function () {
+    return view('projects.song');
+})->name("song");
 
 Route::get("/mission-22", function () {
    return \File::get(public_path() . '/mission-22.html');
