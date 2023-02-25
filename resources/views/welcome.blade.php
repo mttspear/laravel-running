@@ -28,7 +28,6 @@
 
     <link href="{{ asset('css/home.css') }}" rel="stylesheet" type="text/css">
     <style>
-        
         body {
             font-family: 'Nunito', sans-serif;
 
@@ -232,16 +231,21 @@
                     <div class="row mt-10">
                         <h2 id="about">About Me</h2>
 
-                        <p>Hi, my name is Matt and I work remotely as an application developer and analyst. I have over
-                            8 years experience with SQL, PHP and Javascript. </p>
+                        <p>Hi, my name is Matt and I am an experienced application developer and analyst with a passion
+                            for problem-solving. With over 8 years of experience in SQL, PHP, and JavaScript, I have
+                            worked with a diverse range of companies, from Fortune 500 organizations to startups. </p>
 
-                        <p>I have worked for companies ranging from fourtune 500 companies to startups. I'm a problem
-                            solver who uses a variaty of techonologies to analyze and solve problems. </p>
+                        <p>As an analytical thinker, I leverage a variety of technologies to analyze complex problems
+                            and develop effective solutions. My expertise in database design, application development,
+                            reporting, and financial forecasting has enabled me to identify process improvements,
+                            streamline workflows, and drive business growth.
+                        </p>
 
-                        <p>My analytical skills have been used to solve processes via software, understand problems via
-                            reporting and forecast financials. I have a strong data background having worked as both a
-                            developer and in reporting. I have an understanding of databases, application level code,
-                            api's, how data is structured, how to access it and how to analyze it.</p>
+                        <p>With a strong background in data management, I am comfortable working with databases,
+                            application-level code, APIs, and data analysis tools. Whether developing custom software
+                            solutions or optimizing existing systems, I am committed to delivering high-quality results
+                            that meet or exceed expectations.
+                        </p>
 
                     </div>
                 </div>
@@ -307,7 +311,9 @@
                                     <p class="card-text">Jupyter Notebook analytical review of top 1000 running times.
                                     </p>
                                 </div>
-                                <a Target=_blank href="https://www.kaggle.com/embed/mattspear/runninganalysis?kernelSessionId=119597564" class="stretched-link"></a>
+                                <a Target=_blank
+                                    href="https://www.kaggle.com/embed/mattspear/runninganalysis?kernelSessionId=119597564"
+                                    class="stretched-link"></a>
                             </div>
                             <!-- Card -->
 
