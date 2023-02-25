@@ -169,6 +169,8 @@
     </style>
 </head>
 
+@include('layouts.google')
+
 <body class="homepage">
     <div>
         <div id="main">

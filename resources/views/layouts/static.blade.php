@@ -25,6 +25,8 @@
 
 </head>
 
+@include('layouts.google')
+
 <body>
     <div class="container-fluid sticky-top">
         <div id="top-row" class="row">

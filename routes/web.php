@@ -50,7 +50,3 @@ Route::get("/running", function () {
 Route::get("/song-application", function () {
     return view('projects.song');
 })->name("song");
-
-Route::get("/mission-22", function () {
-   return \File::get(public_path() . '/mission-22.html');
-});
