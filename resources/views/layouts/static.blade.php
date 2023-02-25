@@ -6,7 +6,7 @@
 
     <meta name="csrf-token" content="{{ csrf_token() }}" />
 
-    <title>OC Joggers - @yield('title')</title>
+    <title>Matt Spear - @yield('title')</title>
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
@@ -34,7 +34,7 @@
                 <header id="blog-header" class="blog-header py-3">
                     <div class="row flex-nowrap align-items-left">
                         <div class="col-4 text-center">
-                            <h2 class="blog-header-logo text-dark" href="{{ route('index') }}">OC Joggers
+                            <h2 class="blog-header-logo text-dark" href="{{ route('index') }}">Matt Spear
                                 <a href="{{ route('index') }}" class="stretched-link"></a>
                             </h2>
                         </div>
