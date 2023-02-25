@@ -185,7 +185,7 @@
 
                         <div class="gg">
                             <div class="gg-symbol gg-symbol--rect gg-symbol--5 gg-symbol--gradient"
-                                style="background: linear-gradient(90deg, rgb(255, 218, 122) 0%, rgb(255, 105, 105) 100%); opacity: 1; transform: translate(0px, 0px);">
+                                style="background: linear-gradient(90deg, #373B44 0%, #4286f4 100%); opacity: 1; transform: translate(0px, 0px);">
                             </div>
                             <div class="gg-symbol gg-symbol--disc" style="opacity: 1; transform: translate(0px, 0px);">
                             </div>
@@ -193,20 +193,20 @@
 
                         <div class="gg">
                             <div class="gg-symbol gg-symbol--rect gg-symbol--8 gg-symbol--gradient"
-                                style="background: linear-gradient(90deg, rgb(242, 159, 255) 0%, rgb(124, 153, 255) 100%); opacity: 1; transform: translate(0px, 0px);">
+                                style="background: linear-gradient(90deg, #4e54c8 0%, #8f94fb 100%); opacity: 1; transform: translate(0px, 0px);">
                             </div>
                         </div>
 
                         <div class="gg">
                             <div class="gg-symbol gg-symbol--rect gg-symbol--3 gg-symbol--gradient"
-                                style="background: linear-gradient(90deg, rgb(100, 145, 214) 0%, rgb(67, 240, 199) 100%); opacity: 1; transform: translate(0px, 0px);">
+                                style="background: linear-gradient(90deg, #373B44  0%, #4286f4 100%); opacity: 1; transform: translate(0px, 0px);">
                             </div>
                             <div class="gg-symbol gg-symbol--square"
                                 style="opacity: 1; transform: translate(0px, 0px);"></div>
                             <div class="gg-symbol gg-symbol--rect gg-symbol--2"
                                 style="opacity: 1; transform: translate(0px, 0px);"></div>
                             <div class="gg-symbol gg-symbol--rect gg-symbol--5 gg-symbol--gradient"
-                                style="background: linear-gradient(90deg, rgb(100, 145, 214) 0%, rgb(67, 240, 199) 100%); opacity: 1; transform: translate(0px, 0px);">
+                                style="background: linear-gradient(90deg, #544a7d 0%, #ffd452 100%); opacity: 1; transform: translate(0px, 0px);">
                             </div>
                         </div>
 
@@ -257,33 +257,33 @@
                     <div class="col-md-4  offset-md-4">
                         <div class="gg">
                             <div class="gg-symbol gg-symbol--rect gg-symbol--5 gg-symbol--gradient"
-                                style="background: linear-gradient(90deg, rgb(242, 159, 255) 0%, rgb(124, 153, 255) 100%); opacity: 1; transform: translate(0px, 0px);">
+                                style="background: linear-gradient(90deg, #373B44 0%, #4286f4 100%); opacity: 1; transform: translate(0px, 0px);">
                             </div>
                             <div class="gg-symbol gg-symbol--disc" style="opacity: 1; transform: translate(0px, 0px);">
                             </div>
                         </div>
                         <div class="gg">
                             <div class="gg-symbol gg-symbol--rect gg-symbol--3 gg-symbol--gradient"
-                                style="background: linear-gradient(90deg, rgb(100, 145, 214) 0%, rgb(67, 240, 199) 100%); opacity: 1; transform: translate(0px, 0px);">
+                                style="background: linear-gradient(90deg, #544a7d 0%,  #ffd452 100%); opacity: 1; transform: translate(0px, 0px);">
                             </div>
                             <div class="gg-symbol gg-symbol--square"
                                 style="opacity: 1; transform: translate(0px, 0px);"></div>
                             <div class="gg-symbol gg-symbol--rect gg-symbol--2"
                                 style="opacity: 1; transform: translate(0px, 0px);"></div>
                             <div class="gg-symbol gg-symbol--rect gg-symbol--5 gg-symbol--gradient"
-                                style="background: linear-gradient(90deg, rgb(100, 145, 214) 0%, rgb(67, 240, 199) 100%); opacity: 1; transform: translate(0px, 0px);">
+                                style="background: linear-gradient(90deg, #544a7d 0%, #ffd452 100%); opacity: 1; transform: translate(0px, 0px);">
                             </div>
                         </div>
 
                         <h2 id="projects">Projects</h2>
                         <div class="gg">
                             <div class="gg-symbol gg-symbol--rect gg-symbol--8 gg-symbol--gradient"
-                                style="background: linear-gradient(90deg, rgb(242, 159, 255) 0%, rgb(124, 153, 255) 100%); opacity: 1; transform: translate(0px, 0px);">
+                                style="background: linear-gradient(90deg, #373B44 0%, #4286f4 100%); opacity: 1; transform: translate(0px, 0px);">
                             </div>
                         </div>
                         <div class="gg">
                             <div class="gg-symbol gg-symbol--rect gg-symbol--5 gg-symbol--gradient"
-                                style="background: linear-gradient(90deg, rgb(255, 218, 122) 0%, rgb(255, 105, 105) 100%); opacity: 1; transform: translate(0px, 0px);">
+                                style="background: linear-gradient(90deg, #4e54c8  0%, #8f94fb 100%); opacity: 1; transform: translate(0px, 0px);">
                             </div>
                             <div class="gg-symbol gg-symbol--disc" style="opacity: 1; transform: translate(0px, 0px);">
                             </div>
